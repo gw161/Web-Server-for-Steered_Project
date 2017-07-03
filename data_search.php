@@ -57,20 +57,17 @@ href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <br><br><br><br>
 
 <?php
-
 // add course server to mySQL and put database on there, then change these:
 $servername = "127.0.0.1";
 $username = "username";
 $password = "pass";
 $dbname = "database";
-
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn -> connect_error) {
 	$message = $conn -> connect_error;
 } 
-
 else {
 	$message = "Connection successful";
 }
@@ -91,14 +88,19 @@ else {
 
 
 <?php
-
 $input = "";
-
+$len = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$input = htmlspecialchars($_POST["search"]);
 }
+	$len = strlen($input);
+	if ($len >= 3) {
 	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
 	$result = $conn->query($sql);
+	}
+	else {
+		print "Please enter at least 3 characters.";
+}
 		
 if (!$result) {
 printf("Error: %s\n", $conn->error);
@@ -123,7 +125,6 @@ else {
 		}
 	}
 }
-
 ?>
 
 
