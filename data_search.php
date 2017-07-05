@@ -74,16 +74,17 @@
                     <small>A is for Awesome</small>
                 </h1>
 
-<br><br><br><br>
-
 <?php
+
+$db = parse_ini_file("config-file.ini");
+
 // add course server to mySQL and put database on there, then change these:
-$servername = "127.0.0.1";
-$username = "username";
-$password = "password";
-$dbname = "database";
+$host = $db['host'];
+$user = $db['user'];
+$pass = $db['pass'];
+$name = $db['name'];
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($host, $user, $pass, $name);
 // Check connection
 if ($conn -> connect_error) {
 	$message = $conn -> connect_error;
@@ -120,16 +121,16 @@ if ($len >= 3) {
 	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
 	$result = $conn->query($sql);
 	if (!$result) {
-printf("Error: %s\n", $conn->error);
-	$table = "<strong>No results</strong>";
-} 
+		printf("Error: %s\n", $conn->error);
+		$table = "<strong>No results</strong>";
+	} 
 	
-else {
-	echo $sql . "<br>";
-	$table = "";
-	if ($input) {
+	else {
+		echo $sql . "<br>";
+		$table = "";
+		if ($input) {
 				
-		if ($result->num_rows > 0) {
+			if ($result->num_rows > 0) {
 				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
 				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td>".$row["gene_short_name"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
