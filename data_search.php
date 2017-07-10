@@ -111,8 +111,8 @@ else {
 		</div>
 	</div>
 
-       <select style="height: 2.4em; width: 10em;">
-          <option><a href="#">All</a></option>
+       <select style="height: 2.4em; width: 10em;" name="genome_id">
+          <option value='All'>All</option>
           <?php while ($row = $result -> fetch_object()): ?>
           <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
 		  <?php endwhile; ?>
@@ -135,11 +135,18 @@ $result = "";
 $table = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$input = htmlspecialchars($_POST["search"]);
+	$genome_input = htmlspecialchars($_POST["genome_id"]);
+
 }
 $len = strlen($input);
 if ($len >= 3) {
 	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
+	if ($genome_input != 'All') { 
+		$sql = $sql . " AND genome='$genome_input'";
+	}
+
 	$result = $conn->query($sql);
+
 	if (!$result) {
 printf("Error: %s\n", $conn->error);
 	$table = "<strong>No results</strong>";
