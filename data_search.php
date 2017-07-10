@@ -93,18 +93,38 @@ else {
 	$message = "Connection successful";
 }
 ?>
-    
+
+<?php
+	$find_genome_ids = 'SELECT DISTINCT(genome) FROM Search;';
+	$result = $conn->query($find_genome_ids);
+?>
+
+  
 <h1>Data Search</h1>
 	<p>Search here:</p>
 	<form action="<?php echo htmlspecialchars("data_search.php")?>" method="post">
-	<div class="input-group">
+	<div class="input-group" style="width: 50%; float: left">
 		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
+
 		<div class="input-group-btn">
+			
+		</div>
+	</div>
+
+       <select style="height: 2.4em; width: 10em;">
+          <option><a href="#">All</a></option>
+          <?php while ($row = $result -> fetch_object()): ?>
+          <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
+		  <?php endwhile; ?>
+
+        </select>
+
 			<button class="btn btn-default" type="submit">
 				<i class="glyphicon glyphicon-search"></i>
 			 </button>
-		</div>
-	</div>
+
+
+
 </form>
 
 
@@ -121,16 +141,16 @@ if ($len >= 3) {
 	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
 	$result = $conn->query($sql);
 	if (!$result) {
-		printf("Error: %s\n", $conn->error);
-		$table = "<strong>No results</strong>";
-	} 
+printf("Error: %s\n", $conn->error);
+	$table = "<strong>No results</strong>";
+} 
 	
-	else {
-		echo $sql . "<br>";
-		$table = "";
-		if ($input) {
+else {
+	echo $sql . "<br>";
+	$table = "";
+	if ($input) {
 				
-			if ($result->num_rows > 0) {
+		if ($result->num_rows > 0) {
 				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
 				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td>".$row["gene_short_name"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
@@ -144,8 +164,9 @@ if ($len >= 3) {
 	}
 }
 }
+
 else {
-	print "Please enter at least 3 characters.";
+	print "<p style='clear: both;'>Please enter at least 3 characters.</p>";
 }
 		
 ?>
