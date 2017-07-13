@@ -75,9 +75,7 @@
                 </h1>
 
 <?php
-
 $db = parse_ini_file("config-file.ini");
-
 // add course server to mySQL and put database on there, then change these:
 $host = $db['host'];
 $user = $db['user'];
@@ -136,7 +134,6 @@ $table = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$input = htmlspecialchars($_POST["search"]);
 	$genome_input = htmlspecialchars($_POST["genome_id"]);
-
 }
 $len = strlen($input);
 if ($len >= 3) {
@@ -144,9 +141,7 @@ if ($len >= 3) {
 	if ($genome_input != 'All') { 
 		$sql = $sql . " AND genome='$genome_input'";
 	}
-
 	$result = $conn->query($sql);
-
 	if (!$result) {
 printf("Error: %s\n", $conn->error);
 	$table = "<strong>No results</strong>";
@@ -160,7 +155,7 @@ else {
 		if ($result->num_rows > 0) {
 				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td>".$row["gene_short_name"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
+				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='data_view.php?".$row["gene_short_name"]."'>".$row["gene_short_name"]."</a></td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
 						//echo "gene: " .  $row["gene_id"] . " " . "gene_short_name: " . $row["gene_short_name"].""7973: " . $row["7973"].""8050: " . $row["8050"].""8043: " . $row["8043"].""8033: " . $row["8033"].""8059: " . $row["8059"]."<br>";
 			}
 		$table .= "</tbody>";
@@ -171,7 +166,6 @@ else {
 	}
 }
 }
-
 else {
 	print "<p style='clear: both;'>Please enter at least 3 characters.</p>";
 }
