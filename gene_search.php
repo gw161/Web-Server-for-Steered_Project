@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>4 Col Portfolio - Start Bootstrap Template</title>
+    <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="bootstrap.min.css" rel="stylesheet">
@@ -48,9 +48,13 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-                    <li>
-                        <a href="data_search.php">Data-Search</a>
-                    </li>
+					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data-Search<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="gene_search.php">Search by Gene</a></li>
+							<li><a href="#">Genome Browser</a></li>
+							<li><a href="#">Search FASTQC</a></li>
+						</ul>
+					</li>
                     <li>
                         <a href="image_archive.html">Full Image Archive</a>
                     </li>
@@ -98,9 +102,9 @@ else {
 ?>
 
   
-<h1>Data Search</h1>
+<h1>Gene Search</h1>
 	<p>Search here:</p>
-	<form action="<?php echo htmlspecialchars("data_search.php")?>" method="post">
+	<form action="<?php echo htmlspecialchars("gene_search.php")?>" method="post">
 	<div class="input-group" style="width: 50%; float: left">
 		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
 
@@ -148,15 +152,15 @@ printf("Error: %s\n", $conn->error);
 } 
 	
 else {
-	echo $sql . "<br>";
+	//echo $sql . "<br>";
 	$table = "";
 	if ($input) {
 				
 		if ($result->num_rows > 0) {
 				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='data_view.php?".$row["gene_short_name"]."'>".$row["gene_short_name"]."</a></td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
-						//echo "gene: " .  $row["gene_id"] . " " . "gene_short_name: " . $row["gene_short_name"].""7973: " . $row["7973"].""8050: " . $row["8050"].""8043: " . $row["8043"].""8033: " . $row["8033"].""8059: " . $row["8059"]."<br>";
+				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='gene_view.php?".$row["gene_short_name"]."'>".$row["gene_short_name"]."</a></td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
+
 			}
 		$table .= "</tbody>";
 		} 
@@ -198,7 +202,7 @@ else {
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Copyright &copy; Your Website 2014</p>
+                    <p>Group A Steered Research Project - MSc Bioinformatics @ University of Leicester - 2017</p>
                 </div>
             </div>
             <!-- /.row -->
