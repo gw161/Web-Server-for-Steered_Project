@@ -12,10 +12,10 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="CSS/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="4-col-portfolio.css" rel="stylesheet">
+    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,7 +28,7 @@
 
 <body>
 
-  <body background="geometry.png">
+  <body background="Images/geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -51,8 +51,8 @@
 					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data-Search<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="gene_search.php">Search by Gene</a></li>
-							<li><a href="#">Genome Browser</a></li>
-							<li><a href="#">Search FASTQC</a></li>
+							<li><a href="search_genome_browser.php">Genome Browser</a></li>
+							<li><a href="search_fastqc.php">Search FASTQC</a></li>
 						</ul>
 					</li>
                     <li>
@@ -157,9 +157,9 @@ else {
 	if ($input) {
 				
 		if ($result->num_rows > 0) {
-				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
+				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>Genome</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='gene_view.php?".$row["gene_short_name"]."'>".$row["gene_short_name"]."</a></td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
+				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
 
 			}
 		$table .= "</tbody>";
