@@ -1,5 +1,8 @@
-1) Need to create a form which allows clickable functionality for gene short name to take user to different page ( eg.data_view.php) where they can view corresponding data in graphs etc
-2) Create the page data_view.php which pulls out the gene short name from data_search.php correctly. Incorporate Rshiny to build relevant graphs
-3) Create UCSC custom tracks and get links on website
-4) Fill in the sections yet unfilled with relevant information
-5) Create links to fastqc files
+1) Incorporate Rshiny to build relevant graphs? Or using d3 is OK?
+2) Create UCSC custom tracks and get links on website OR embed IGV
+3) Fill in the sections yet unfilled with relevant information
+4) Create links to fastqc files
+5) Make it so that the graphs generated on gene_view.php form for 
+  user's selected gene AND genome (so if user searched rn4 sox9, only 
+  generate graph for rn4 sox9. if searched all genomes and sox9, generate 
+  2 graphs for sox9)
