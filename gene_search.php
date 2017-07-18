@@ -48,15 +48,15 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data-Search<span class="caret"></span></a>
+					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="gene_search.php">Search by Gene</a></li>
 							<li><a href="search_genome_browser.php">Genome Browser</a></li>
-							<li><a href="search_fastqc.php">Search FASTQC</a></li>
+							<li><a href="fastqc.html">FASTQC</a></li>
 						</ul>
 					</li>
                     <li>
-                        <a href="image_archive.html">Full Image Archive</a>
+                        <a href="image_archive.html">Image Archive</a>
                     </li>
                       <li>
                         <a href="team.html">Team</a>
@@ -159,8 +159,7 @@ else {
 		if ($result->num_rows > 0) {
 				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>Genome</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
-
+				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
 			}
 		$table .= "</tbody>";
 		} 
@@ -194,7 +193,7 @@ else {
         </div>
         <!-- /.row -->
 
-
+<br><br>
 
         <hr>
 
