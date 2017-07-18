@@ -48,13 +48,13 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="gene_search.php">Search by Gene</a></li>
-							<li><a href="search_genome_browser.php">Genome Browser</a></li>
-							<li><a href="fastqc.html">FASTQC</a></li>
-						</ul>
-					</li>
+		    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+		   	<ul class="dropdown-menu">
+				<li><a href="gene_search.php">Search by Gene</a></li>
+				<li><a href="search_ucsc.php">Genome Browser</a></li>
+				<li><a href="fastqc.html">FASTQC</a></li>
+			</ul>
+		    </li>
                     <li>
                         <a href="image_archive.html">Image Archive</a>
                     </li>
