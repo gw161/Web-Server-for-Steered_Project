@@ -12,10 +12,10 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="CSS/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
+    <link href="4-col-portfolio.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -32,7 +32,7 @@
 
 <body>
 
-  <body background="Images/geometry.png">
+  <body background="geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -52,13 +52,13 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data-Search<span class="caret"></span></a>
+					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="gene_search.php">Search by Gene</a></li>
 							<li><a href="search_genome_browser.php">Genome Browser</a></li>
-							<li><a href="search_fastqc.php">Search FASTQC</a></li>
+							<li><a href="fastqc.html">FASTQC</a></li>
 						</ul>
-					</li>
+					</li>>
                     <li>
                         <a href="image_archive.html">Full Image Archive</a>
                     </li>
@@ -87,6 +87,7 @@ $heading=$_GET["gene"];
                 </h1>
 
 <article> 
+<div id ="chartID"></div>
 <div id="scatter-load"></div>
 </article>
 
@@ -122,6 +123,269 @@ $heading=$_GET["gene"];
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+.axis {
+    font: 13px sans-serif;
+  }
+.axis path, .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+  }
+
+.bar {
+    fill: #8CD3DD;
+  }
+.bar:hover {
+    fill: #F56C4E;
+  }
+svg text.label {
+  fill:black;
+  font: 15px;  
+  font-weight: 400;
+  text-anchor: middle;
+}
+#chartID {
+	min-width: 531px;
+}
+	</style>
+
+
+        <!-- Insert bar chart-->
+
+
+
+
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+
+
+
+
+
+
+
+<script>
+
+
+
+<?php
+$db = parse_ini_file("config-file.ini");
+// add course server to mySQL and put database on there, then change these:
+$host = $db['host'];
+$user = $db['user'];
+$pass = $db['pass'];
+$name = $db['name'];
+// Create connection
+$conn = new mysqli($host, $user, $pass, $name);
+// Check connection
+if ($conn -> connect_error) {
+	$message = $conn -> connect_error;
+} 
+else {
+	$message = "Connection successful";
+}
+?>
+
+<?php
+	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
+	$result = $conn->query($sql);
+
+	$row = $result -> fetch_assoc();
+
+?>
+
+
+
+var data = [{"food":"7973","quantity":<?php echo $row["7973"]; ?>},{"food":"8050","quantity":<?php echo $row["8050"]; ?>},{"food":"8043","quantity":<?php echo $row["8043"]; ?>},{"food":"8033","quantity":<?php echo $row["8033"]; ?>},{"food":"8059","quantity":<?php echo $row["8059"]; ?>}]
+
+
+
+var margin = {top:10, right:10, bottom:90, left:10};
+
+var width = 960 - margin.left - margin.right;
+
+var height = 500 - margin.top - margin.bottom;
+
+var xScale = d3.scale.ordinal().rangeRoundBands([0, width], .03)
+
+var yScale = d3.scale.linear()
+      .range([height, 0]);
+
+
+var xAxis = d3.svg.axis()
+		.scale(xScale)
+		.orient("bottom");
+      
+      
+var yAxis = d3.svg.axis()
+		.scale(yScale)
+		.orient("left");
+
+var svgContainer = d3.select("#chartID").append("svg")
+		.attr("width", width+margin.left + margin.right)
+		.attr("height",height+margin.top + margin.bottom)
+		.append("g").attr("class", "container")
+		.attr("transform", "translate("+ margin.left +","+ margin.top +")");
+
+xScale.domain(data.map(function(d) { return d.food; }));
+yScale.domain([0, d3.max(data, function(d) { return d.quantity; })]);
+
+
+//xAxis. To put on the top, swap "(height)" with "-5" in the translate() statement. Then you'll have to change the margins above and the x,y attributes in the svgContainer.select('.x.axis') statement inside resize() below.
+var xAxis_g = svgContainer.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + (height) + ")")
+		.call(xAxis)
+		.selectAll("text");
+			
+// Uncomment this block if you want the y axis
+/*var yAxis_g = svgContainer.append("g")
+		.attr("class", "y axis")
+		.call(yAxis)
+		.append("text")
+		.attr("transform", "rotate(-90)")
+		.attr("y", 6).attr("dy", ".71em")
+		//.style("text-anchor", "end").text("Number of Applicatons"); 
+*/
+
+
+	svgContainer.selectAll(".bar")
+  		.data(data)
+  		.enter()
+  		.append("rect")
+  		.attr("class", "bar")
+  		.attr("x", function(d) { return xScale(d.food); })
+  		.attr("width", xScale.rangeBand())
+  		.attr("y", function(d) { return yScale(d.quantity); })
+  		.attr("height", function(d) { return height - yScale(d.quantity); });
+
+
+
+
+
+// Controls the text labels at the top of each bar. Partially repeated in the resize() function below for responsiveness.
+	svgContainer.selectAll(".text")  		
+	  .data(data)
+	  .enter()
+	  .append("text")
+	  .attr("class","label")
+	  .attr("x", (function(d) { return xScale(d.food) + xScale.rangeBand() / 2 ; }  ))
+	  .attr("y", function(d) { return yScale(d.quantity) + 1; })
+	  .attr("dy", ".75em")
+	  .text(function(d) { return d.quantity; });  
+
+
+
+document.addEventListener("DOMContentLoaded", resize);
+d3.select(window).on('resize', resize); 
+
+function resize() {
+	console.log('----resize function----');
+  // update width
+  width = parseInt(d3.select('#chartID').style('width'), 10);
+  width = width - margin.left - margin.right;
+
+  height = parseInt(d3.select("#chartID").style("height"));
+  height = height - margin.top - margin.bottom;
+	console.log('----resiz width----'+width);
+	console.log('----resiz height----'+height);
+  // resize the chart
+  
+    xScale.range([0, width]);
+    xScale.rangeRoundBands([0, width], .03);
+    yScale.range([height, 0]);
+
+    yAxis.ticks(Math.max(height/50, 2));
+    xAxis.ticks(Math.max(width/50, 2));
+
+    d3.select(svgContainer.node().parentNode)
+        .style('width', (width + margin.left + margin.right) + 'px');
+
+    svgContainer.selectAll('.bar')
+    	.attr("x", function(d) { return xScale(d.food); })
+      .attr("width", xScale.rangeBand());
+      
+   svgContainer.selectAll("text")  		
+	 // .attr("x", function(d) { return xScale(d.food); })
+	 .attr("x", (function(d) { return xScale(d.food	) + xScale.rangeBand() / 2 ; }  ))
+      .attr("y", function(d) { return yScale(d.quantity) + 1; })
+      .attr("dy", ".75em");   	      
+
+    svgContainer.select('.x.axis').call(xAxis.orient('bottom')).selectAll("text").attr("y",10).call(wrap, xScale.rangeBand());
+    // Swap the version below for the one above to disable rotating the titles
+    // svgContainer.select('.x.axis').call(xAxis.orient('top')).selectAll("text").attr("x",55).attr("y",-25);
+    	
+   
+}
+
+
+function wrap(text, width) {
+  text.each(function() {
+    var text = d3.select(this),
+        words = text.text().split(/\s+/).reverse(),
+        word,
+        line = [],
+        lineNumber = 0,
+        lineHeight = 1.1, // ems
+        y = text.attr("y"),
+        dy = parseFloat(text.attr("dy")),
+        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(" "));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        tspan.text(line.join(" "));
+        line = [word];
+        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+      }
+    }
+  });
+}
+
+</script>
+        <!-- End insert bar chart-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		<script>
 
@@ -195,6 +459,7 @@ var mousedata = [{
 
 // call the method below
 showScatterPlot(mousedata);
+
 
 function showScatterPlot(data) {
     // just to have some space around items. 
