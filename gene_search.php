@@ -48,13 +48,13 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-		    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		   	<ul class="dropdown-menu">
-				<li><a href="gene_search.php">Search by Gene</a></li>
-				<li><a href="search_ucsc.php">Genome Browser</a></li>
-				<li><a href="fastqc.html">FASTQC</a></li>
-			</ul>
-		    </li>
+		    		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+		   				<ul class="dropdown-menu">
+							<li><a href="gene_search.php">Search by Gene</a></li>
+							<li><a href="search_ucsc.php">Genome Browser</a></li>
+							<li><a href="fastqc.html">FASTQC</a></li>
+						</ul>
+		   			</li>
                     <li>
                         <a href="image_archive.html">Image Archive</a>
                     </li>
@@ -79,7 +79,7 @@
                 </h1>
 
 <?php
-$db = parse_ini_file("config-file.ini");
+$db = parse_ini_file("../config-file.ini");
 // add course server to mySQL and put database on there, then change these:
 $host = $db['host'];
 $user = $db['user'];
@@ -157,9 +157,9 @@ else {
 	if ($input) {
 				
 		if ($result->num_rows > 0) {
-				$table = "<thead><tr> <th>Gene ID</th><th>Gene Short Name</th> <th>Genome</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
+				$table = "<thead><tr> <th>Locus</th> <th>Gene ID</th><th>Gene Short Name</th> <th>Genome</th> <th>Trimmed/Untrimmed</th> <th>Pipeline</th> <th>Rat 7973</th><th>Rat 8050</th><th>Rat 8043</th><th>Rat 8033</th><th>Rat 8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
+				$table .= "<tbody><tr><td>".$row["locus"]."</td><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["trimmed_or_untrimmed"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."</td><td>".$row["rat_8050"]."</td><td>".$row["rat_8043"]."</td><td>".$row["rat_8033"]."</td><td>".$row["rat_8059"]."</td></tr>";  
 			}
 		$table .= "</tbody>";
 		} 
@@ -193,7 +193,7 @@ else {
         </div>
         <!-- /.row -->
 
-<br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
         <hr>
 
