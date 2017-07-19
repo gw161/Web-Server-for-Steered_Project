@@ -52,15 +52,15 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-		    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		   	<ul class="dropdown-menu">
-				<li><a href="gene_search.php">Search by Gene</a></li>
-				<li><a href="search_ucsc.php">Genome Browser</a></li>
-				<li><a href="fastqc.html">FASTQC</a></li>
-			</ul>
-		    </li>
+		    		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+		   				<ul class="dropdown-menu">
+							<li><a href="gene_search.php">Search by Gene</a></li>
+							<li><a href="search_ucsc.php">Genome Browser</a></li>
+							<li><a href="fastqc.html">FASTQC</a></li>
+						</ul>
+		   			</li>
                     <li>
-                        <a href="image_archive.html">Full Image Archive</a>
+                        <a href="image_archive.html">Image Archive</a>
                     </li>
                       <li>
                         <a href="team.html">Team</a>
@@ -78,6 +78,35 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
+
+
+<?php
+$db = parse_ini_file("../config-file.ini");
+// add course server to mySQL and put database on there, then change these:
+$host = $db['host'];
+$user = $db['user'];
+$pass = $db['pass'];
+$name = $db['name'];
+// Create connection
+$conn = new mysqli($host, $user, $pass, $name);
+// Check connection
+if ($conn -> connect_error) {
+	$message = $conn -> connect_error;
+} 
+else {
+	$message = "Connection successful";
+}
+?>
+
+<?php
+$heading='';
+	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
+	$result = $conn->query($sql);
+
+	$row = $result -> fetch_assoc();
+
+?>
+
 <?php
 $heading=$_GET["gene"];
 ?>
@@ -126,22 +155,6 @@ $heading=$_GET["gene"];
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style>
 .axis {
     font: 13px sans-serif;
@@ -187,23 +200,7 @@ svg text.label {
 
 
 
-<?php
-$db = parse_ini_file("config-file.ini");
-// add course server to mySQL and put database on there, then change these:
-$host = $db['host'];
-$user = $db['user'];
-$pass = $db['pass'];
-$name = $db['name'];
-// Create connection
-$conn = new mysqli($host, $user, $pass, $name);
-// Check connection
-if ($conn -> connect_error) {
-	$message = $conn -> connect_error;
-} 
-else {
-	$message = "Connection successful";
-}
-?>
+
 
 <?php
 	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
@@ -215,7 +212,7 @@ else {
 
 
 
-var data = [{"food":"7973","quantity":<?php echo $row["7973"]; ?>},{"food":"8050","quantity":<?php echo $row["8050"]; ?>},{"food":"8043","quantity":<?php echo $row["8043"]; ?>},{"food":"8033","quantity":<?php echo $row["8033"]; ?>},{"food":"8059","quantity":<?php echo $row["8059"]; ?>}]
+var data = [{"food":"rat_7973","quantity":<?php echo $row["rat_7973"]; ?>},{"food":"8050","quantity":<?php echo $row["rat_8050"]; ?>},{"food":"rat_8043","quantity":<?php echo $row["rat_8043"]; ?>},{"food":"rat_8033","quantity":<?php echo $row["rat_8033"]; ?>},{"food":"rat_8059","quantity":<?php echo $row["rat_8059"]; ?>}]
 
 
 
@@ -391,69 +388,45 @@ function wrap(text, width) {
 
 
 
-<?php
-$db = parse_ini_file("config-file.ini");
-// add course server to mySQL and put database on there, then change these:
-$host = $db['host'];
-$user = $db['user'];
-$pass = $db['pass'];
-$name = $db['name'];
-// Create connection
-$conn = new mysqli($host, $user, $pass, $name);
-// Check connection
-if ($conn -> connect_error) {
-	$message = $conn -> connect_error;
-} 
-else {
-	$message = "Connection successful";
-}
-?>
 
-<?php
-	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
-	$result = $conn->query($sql);
-
-	$row = $result -> fetch_assoc();
-
-?>
 
 
 
 var mousedata = [{
 
-	"name": "7973",
+	"name": "rat_7973",
 	"x": 1,
-	"expression": <?php echo $row["7973"]; ?>
+	"expression": <?php echo $row["rat_7973"]; ?>
 },
 
 {
-	"name": "8050",
+	"name": "rat_8050",
 	"x": 2,
-	"expression": <?php echo $row["8050"]; ?>
+	"expression": <?php echo $row["rat_8050"]; ?>
 
 
 },
 
 {
-	"name": "8043",
+	"name": "rat_8043",
 	"x": 3,
-	"expression": <?php echo $row["8043"]; ?>
+	"expression": <?php echo $row["rat_8043"]; ?>
 
 
 },
 
 {
-	"name": "8033",
+	"name": "rat_8033",
 	"x": 4,
-	"expression": <?php echo $row["8033"]; ?>
+	"expression": <?php echo $row["rat_8033"]; ?>
 
 
 },
 
 {
-	"name": "8059",
+	"name": "rat_8059",
 	"x": 5,
-	"expression": <?php echo $row["8059"]; ?>
+	"expression": <?php echo $row["rat_8059"]; ?>
 
 }];
 
