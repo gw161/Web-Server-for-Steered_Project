@@ -120,7 +120,7 @@ $heading=$_GET["gene"];
 <div id="scatter-load"></div>
 </article>
 
-
+<p><td><a href="http://www.sigmaaldrich.com/catalog/genes/'.<?php echo strtoupper($heading); ?>.'?lang=en&region=GB"></td></p>
 
 
 
