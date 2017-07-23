@@ -12,10 +12,10 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="CSS/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
+    <link href="4-col-portfolio.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,7 +28,7 @@
 
 <body>
 
-  <body background="Images/geometry.png">
+  <body background="geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -79,7 +79,7 @@
                 </h1>
 
 <?php
-$db = parse_ini_file("../config-file.ini");
+$db = parse_ini_file("config-file.ini");
 // add course server to mySQL and put database on there, then change these:
 $host = $db['host'];
 $user = $db['user'];
@@ -101,11 +101,24 @@ else {
 	$result = $conn->query($find_genome_ids);
 ?>
 
+<?php
+	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM Search;';
+	$result_trim = $conn->query($find_trim_status);
+?>
+
+
+
+<?php
+	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM Search;';
+	$result_pipeline = $conn->query($find_pipeline_id);
+?>
+
+
   
 <h1>Gene Search</h1>
 	<p>Search here:</p>
 	<form action="<?php echo htmlspecialchars("gene_search.php")?>" method="post">
-	<div class="input-group" style="width: 50%; float: left">
+	<div class="input-group" style="width: 40%; float: left">
 		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
 
 		<div class="input-group-btn">
@@ -114,16 +127,33 @@ else {
 	</div>
 
        <select style="height: 2.4em; width: 10em;" name="genome_id">
-          <option value='All'>All</option>
+          <option value='All'>All Genomes</option>
           <?php while ($row = $result -> fetch_object()): ?>
           <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
 		  <?php endwhile; ?>
 
         </select>
 
+       <select style="height: 2.4em; width: 15em;" name="trim_status_id">
+          <option value='All'>Trimmed And Untrimmed</option>
+          <?php while ($row = $result_trim -> fetch_object()): ?>
+          <option value='<?php echo $row->trimmed_or_untrimmed; ?>'><?php echo $row->trimmed_or_untrimmed; ?></option>
+		  <?php endwhile; ?>
+
+        </select>
+
+       <select style="height: 2.4em; width: 10em;" name="pipeline_id">
+          <option value='All'>All Pipelines</option>
+          <?php while ($row = $result_pipeline -> fetch_object()): ?>
+          <option value='<?php echo $row->pipeline; ?>'><?php echo $row->pipeline; ?></option>
+		  <?php endwhile; ?>
+
+        </select>
+
+
 			<button class="btn btn-default" type="submit">
 				<i class="glyphicon glyphicon-search"></i>
-			 </button>
+			</button>
 
 
 
