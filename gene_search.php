@@ -12,10 +12,15 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="CSS/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="4-col-portfolio.css" rel="stylesheet">
+    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
+
+    <!-- Bootstrap JS -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,7 +33,7 @@
 
 <body>
 
-  <body background="geometry.png">
+  <body background="Images/geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -48,13 +53,14 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-		    		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		   				<ul class="dropdown-menu">
-							<li><a href="gene_search.php">Search by Gene</a></li>
-							<li><a href="search_ucsc.php">Genome Browser</a></li>
-							<li><a href="fastqc.html">FASTQC</a></li>
-						</ul>
-		   			</li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+                         <ul class="dropdown-menu">
+                              <li><a href="gene_search.php">Search Gene Data</a></li>
+                              <li><a href="graph_data.php">Graph Gene Data</a></li>
+                              <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
+                              <li><a href="fastqc.html">View FASTQC Files</a></li>
+                         </ul>
+                    </li>
                     <li>
                         <a href="image_archive.html">Image Archive</a>
                     </li>
@@ -97,26 +103,25 @@ else {
 ?>
 
 <?php
-	$find_genome_ids = 'SELECT DISTINCT(genome) FROM Search;';
+	$find_genome_ids = 'SELECT DISTINCT(genome) FROM FPKM;';
 	$result = $conn->query($find_genome_ids);
 ?>
 
 <?php
-	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM Search;';
+	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM FPKM;';
 	$result_trim = $conn->query($find_trim_status);
 ?>
 
 
 
 <?php
-	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM Search;';
+	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM FPKM;';
 	$result_pipeline = $conn->query($find_pipeline_id);
 ?>
 
 
   
 <h1>Gene Search</h1>
-	<p>Search here:</p>
 	<form action="<?php echo htmlspecialchars("gene_search.php")?>" method="post">
 	<div class="input-group" style="width: 40%; float: left">
 		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
@@ -171,7 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 $len = strlen($input);
 if ($len >= 3) {
-	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
+	$sql = "SELECT * FROM FPKM WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
 	if ($genome_input != 'All') { 
 		$sql = $sql . " AND genome='$genome_input'";
 	}
@@ -182,20 +187,22 @@ printf("Error: %s\n", $conn->error);
 } 
 	
 else {
-	//echo $sql . "<br>";
 	$table = "";
 	if ($input) {
+
+$input2 = $row["gene_short_name"];
+
 				
-		if ($result->num_rows > 0) {
-				$table = "<thead><tr> <th>Locus</th> <th>Gene ID</th><th>Gene Short Name</th> <th>Genome</th> <th>Trimmed/Untrimmed</th> <th>Pipeline</th> <th>Rat 7973</th><th>Rat 8050</th><th>Rat 8043</th><th>Rat 8033</th><th>Rat 8059</th> </tr></thead>";
-			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["locus"]."</td><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["trimmed_or_untrimmed"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."</td><td>".$row["rat_8050"]."</td><td>".$row["rat_8043"]."</td><td>".$row["rat_8033"]."</td><td>".$row["rat_8059"]."</td></tr>";  
-			}
-		$table .= "</tbody>";
-		} 
-		else { 
-			$table = "<strong>No results</strong>"; 
+	if ($result->num_rows > 0) {
+			$table = "<thead><tr> <th><font size='2'>Select</font></th> <th><font size='2'>Locus</font></th> <th><font size='2'>Gene ID</font></th><th><font size='2'>Gene Name</font></th> <th style='display: none;'>Genome</th> <th style='display: none;'>Trim Status</th> <th style='display: none;'>Pipeline</th> <th><font size='2'>Rat 7973 FPKM</font></th><th style='display: none;'><font size='2'>Rat 7973 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 7973 FPKM High</font></th><th><font size='2'>Rat 8050 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8050 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8050 FPKM High</font></th><th><font size='2'>Rat 8043 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8043 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8043 FPKM High</font></th><th><font size='2'>Rat 8033 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8033 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8033 FPKM High</font></th><th><font size='2'>Rat 8059 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8059 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8059 FPKM High</font></th> </tr></thead>";
+		while ($row = $result -> fetch_assoc()) {
+			$table .= "<tbody><tr><td>".$row["select"]."<a target='_blank' href='http://www.sigmaaldrich.com/catalog/genes/$input2?lang=en&region=GB'><button type='button' class='btn btn-default btn-xs'>Gene Information</button></a><br><a target='_blank' href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."&pipeline=".$row["pipeline"]."'><button type='button' class='btn btn-default btn-xs'>Plotly Graphs</button></a></td><td><font size='2'>".$row["locus"]."</font></td><td><font size='2'>".$row["gene_id"]."</font></td><td><font size='2'>".$row["gene_short_name"]."</font></a></td><td style='display: none;'>".$row["genome"]."</td><td style='display: none;'>".$row["trimmed_or_untrimmed"]."</td><td style='display: none;'>".$row["pipeline"]."</td><td><font size='2'>".$row["rat_7973"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_7973_low"]."</font></td><tdstyle='display: none;'><font size='2'>".$row["rat_7973_high"]."</font></td><td><font size='2'>".$row["rat_8050"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8050_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8050_high"]."</font></td><td><font size='2'>".$row["rat_8043"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8043_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8043_high"]."</font></td><td><font size='2'>".$row["rat_8033"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8033_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8033_high"]."</font></td><td><font size='2'>".$row["rat_8059"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8059_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8059_high"]."</font></td></tr>";  
 		}
+		$table .= "</tbody>";
+	} 
+	else { 
+		$table = "<strong>No results</strong>"; 
+	}
 	}
 }
 }
