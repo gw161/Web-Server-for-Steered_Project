@@ -12,10 +12,15 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="CSS/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="4-col-portfolio.css" rel="stylesheet">
+    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
+
+    <!-- Bootstrap JS -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,7 +33,7 @@
 
 <body>
 
-  <body background="geometry.png">
+  <body background="Images/geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -47,14 +52,14 @@
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="background.html">Background</a>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+                         <ul class="dropdown-menu">
+                              <li><a href="gene_search.php">Search Gene Data</a></li>
+                              <li><a href="graph_data.php">Graph Gene Data</a></li>
+                              <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
+                              <li><a href="fastqc.html">View FASTQC Files</a></li>
+                         </ul>
                     </li>
-		    		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		   				<ul class="dropdown-menu">
-							<li><a href="gene_search.php">Search by Gene</a></li>
-							<li><a href="search_ucsc.php">Genome Browser</a></li>
-							<li><a href="fastqc.html">FASTQC</a></li>
-						</ul>
-		   			</li>
                     <li>
                         <a href="image_archive.html">Image Archive</a>
                     </li>
@@ -79,7 +84,7 @@
                 </h1>
 
 <?php
-$db = parse_ini_file("../config-file.ini");
+$db = parse_ini_file("config-file.ini");
 // add course server to mySQL and put database on there, then change these:
 $host = $db['host'];
 $user = $db['user'];
@@ -97,17 +102,27 @@ else {
 ?>
 
 <?php
-	$find_genome_ids = 'SELECT DISTINCT(genome) FROM Search;';
+	$find_genome_ids = 'SELECT DISTINCT(genome) FROM ucsc_search;';
 	$result = $conn->query($find_genome_ids);
+?>
+
+<?php
+	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM ucsc_search;';
+	$result_trim = $conn->query($find_trim_status);
 ?>
 
 
 
+<?php
+	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM ucsc_search;';
+	$result_pipeline = $conn->query($find_pipeline_id);
+?>
+
+
   
-<h1>Gene Search</h1>
-	<p>Search here:</p>
-	<form action="<?php echo htmlspecialchars("http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row["genome"]&position=$row["locus"]&hgct_customText=track%20type=bam%20name=myBigBedTrack%20description=%22a%20bigBed%20track%22%20visibility=full%20bigDataUrl=https://s3.eu-west-2.amazonaws.com/agenomestore/rn4_untrimmed_7973/accepted_hits.sorted.bam")?>" method="post">
-	<div class="input-group" style="width: 50%; float: left">
+<h1>UCSC Search</h1>
+	<form action="<?php echo htmlspecialchars("search_ucsc.php")?>" method="post">
+	<div class="input-group" style="width: 40%; float: left">
 		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
 
 		<div class="input-group-btn">
@@ -116,67 +131,37 @@ else {
 	</div>
 
        <select style="height: 2.4em; width: 10em;" name="genome_id">
-          <option value='#'>Select Genome</option>
-          <option value='All'>All</option>
+          <option value='All'>All Genomes</option>
           <?php while ($row = $result -> fetch_object()): ?>
           <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
 		  <?php endwhile; ?>
 
         </select>
 
-			<button class="btn btn-default" type="submit">
-				<i class="glyphicon glyphicon-search"></i>
-			 </button>
-
-
-       <select style="height: 2.4em; width: 10em;" name="rat_id">
-          <option value='#'>Select Rat</option>
-          <option value='All'>All</option>
-          <?php while ($row = $result -> fetch_object()): ?>
-          <option value='<?php echo $row->rat_7973, rat_8050, rat_8059, rat_8043, rat_8033; ?>'><?php echo $row->rat_7973, rat_8050, rat_8059, rat_8043, rat_8033; ?></option>
-		  <?php endwhile; ?>
-
-        </select>
-
-			<button class="btn btn-default" type="submit">
-				<i class="glyphicon glyphicon-search"></i>
-			 </button>
-
-
-       <select style="height: 2.4em; width: 10em;" name="pipeline_id">
-          <option value='#'>Select Trimmed or Untrimmed</option>
-          <option value='All'>All</option>
-          <?php while ($row = $result -> fetch_object()): ?>
+       <select style="height: 2.4em; width: 15em;" name="trim_status_id">
+          <option value='All'>Trimmed And Untrimmed</option>
+          <?php while ($row = $result_trim -> fetch_object()): ?>
           <option value='<?php echo $row->trimmed_or_untrimmed; ?>'><?php echo $row->trimmed_or_untrimmed; ?></option>
 		  <?php endwhile; ?>
 
         </select>
 
-			<button class="btn btn-default" type="submit">
-				<i class="glyphicon glyphicon-search"></i>
-			 </button>
-
-
        <select style="height: 2.4em; width: 10em;" name="pipeline_id">
-          <option value='#'>Select Pipeline</option>
-          <option value='All'>All</option>
-          <?php while ($row = $result -> fetch_object()): ?>
+          <option value='All'>All Pipelines</option>
+          <?php while ($row = $result_pipeline -> fetch_object()): ?>
           <option value='<?php echo $row->pipeline; ?>'><?php echo $row->pipeline; ?></option>
 		  <?php endwhile; ?>
 
         </select>
 
+
 			<button class="btn btn-default" type="submit">
 				<i class="glyphicon glyphicon-search"></i>
-			 </button>
+			</button>
 
 
 
 </form>
-
-
-
-
 
 
 <?php
@@ -187,16 +172,12 @@ $table = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$input = htmlspecialchars($_POST["search"]);
 	$genome_input = htmlspecialchars($_POST["genome_id"]);
-	$pipeline_input = htmlspecialchars($_POST["pipeline_id"]);
 }
 $len = strlen($input);
 if ($len >= 3) {
-	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
+	$sql = "SELECT * FROM ucsc_search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
 	if ($genome_input != 'All') { 
 		$sql = $sql . " AND genome='$genome_input'";
-	}
-	if ($pipeline_input != 'All') { 
-		$sql = $sql . " AND pipeline='$pipeline_input'";
 	}
 	$result = $conn->query($sql);
 	if (!$result) {
@@ -207,12 +188,29 @@ printf("Error: %s\n", $conn->error);
 else {
 	//echo $sql . "<br>";
 	$table = "";
+	function create_ucsc_link($row_assoc_array, $rat_id) {
+		$row_genome = $row_assoc_array["genome"];
+		$row_locus = $row_assoc_array["locus"];
+		$big_data_url = $row_assoc_array["bam_file_rat_$rat_id"];
+		
+		return "http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
+			"&position=$row_locus".
+			"&hgct_customText=track".
+			"%20type=bam".
+			"%20name=myBigBedTrack".
+			"%20description=%22a%20bigBed".
+			"%20track%22%20visibility=full".
+			"%20bigDataUrl=$big_data_url";
+	
+	}
+	
 	if ($input) {
 				
 		if ($result->num_rows > 0) {
-				$table = "<thead><tr> <th>Locus</th> <th>Gene ID</th><th>Gene Short Name</th> <th>Genome</th> <th>Trimmed/Untrimmed</th> <th>Pipeline</th> <th>7973</th><th>8050</th><th>8043</th><th>8033</th><th>8059</th> </tr></thead>";
+				$table = "<thead><tr> <th>Locus</th> <th>Gene ID</th><th>Gene Name</th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th>Rat 7973</th><th>Rat 8050</th><th>Rat 8043</th><th>Rat 8033</th><th>Rat 8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["locus"]."</td><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["trimmed_or_untrimmed"]."</td><td>".$row["pipeline"]."</td><td>".$row["7973"]."</td><td>".$row["8050"]."</td><td>".$row["8043"]."</td><td>".$row["8033"]."</td><td>".$row["8059"]."</td></tr>";  
+				$table .= "<tbody><tr><td>".$row["locus"]."</td><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["trimmed_or_untrimmed"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."<a target='_blank' href='". create_ucsc_link($row, "7973") ."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8050"]."<a target='_blank' href='".create_ucsc_link($row, "8050")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a>
+</td><td>".$row["rat_8043"]."<a target='_blank' href='".create_ucsc_link($row, "8043")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8033"]."<a target='_blank' href='".create_ucsc_link($row, "8033")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8059"]."<a target='_blank' href='".create_ucsc_link($row, "8059")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td></tr>";  
 			}
 		$table .= "</tbody>";
 		} 
@@ -229,8 +227,9 @@ else {
 ?>
 
 
-
 <?php $conn->close();?>
+
+
 
 <div class="table-responsive">
 	<table class="table"><?php echo $table;?></table>
@@ -245,7 +244,7 @@ else {
         </div>
         <!-- /.row -->
 
-<br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
         <hr>
 
