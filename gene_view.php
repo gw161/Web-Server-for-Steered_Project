@@ -52,13 +52,14 @@
                     <li>
                         <a href="background.html">Background</a>
                     </li>
-		    		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		   				<ul class="dropdown-menu">
-							<li><a href="gene_search.php">Search by Gene</a></li>
-							<li><a href="search_ucsc.php">Genome Browser</a></li>
-							<li><a href="fastqc.html">FASTQC</a></li>
-						</ul>
-		   			</li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+                         <ul class="dropdown-menu">
+                              <li><a href="gene_search.php">Search Gene Data</a></li>
+                              <li><a href="graph_data.php">Graph Gene Data</a></li>
+                              <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
+                              <li><a href="fastqc.html">View FASTQC Files</a></li>
+                         </ul>
+                    </li>
                     <li>
                         <a href="image_archive.html">Image Archive</a>
                     </li>
@@ -81,7 +82,7 @@
 
 
 <?php
-$db = parse_ini_file("../config-file.ini");
+$db = parse_ini_file("config-file.ini");
 // add course server to mySQL and put database on there, then change these:
 $host = $db['host'];
 $user = $db['user'];
@@ -100,7 +101,7 @@ else {
 
 <?php
 $heading='';
-	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
+	$sql = "SELECT * FROM FPKM WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
 	$result = $conn->query($sql);
 
 	$row = $result -> fetch_assoc();
@@ -112,20 +113,22 @@ $heading=$_GET["gene"];
 ?>
 
 	<h1 class="page-header"><b><?php echo $heading; ?></b>
-		<small>IDK</small>
+		<small>FPKM Values (Expression Level) Per Rat</small>
 	</h1>
 
 <article> 
 
 <p><td><h3><a target="_blank" href="http://www.sigmaaldrich.com/catalog/genes/<?php echo strtoupper($heading); ?>?lang=en&region=GB">View Gene Information</a></h3></td></p>
-<p><h3>FPKM Values Per Rat:</h3></p>
+<p><h3>Bar Graph</h3></p>
 
-<div id ="chartID"></div>
+<div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
 
 
-<p><h3>idk lol:</h3></p>
 
-<div id="scatter-load"></div>
+<p><h3>Heat Map</h3></p>
+<div id="myDiv2"><!-- Plotly chart will be drawn inside this DIV --></div>
+
+
 </article>
 
 
@@ -165,55 +168,11 @@ $heading=$_GET["gene"];
 
 
 
-<style>
-.axis {
-    font: 13px sans-serif;
-  }
-.axis path, .axis line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
-  }
-
-.bar {
-    fill: #8CD3DD;
-  }
-.bar:hover {
-    fill: #F56C4E;
-  }
-svg text.label {
-  fill:black;
-  font: 15px;  
-  font-weight: 400;
-  text-anchor: middle;
-}
-#chartID {
-	min-width: 531px;
-}
-	</style>
-
-
-        <!-- Insert bar chart-->
-
-
-
-
-<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-
-
-
-
-
-
-
-<script>
-
-
 
 
 
 <?php
-	$sql = "SELECT * FROM Search WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
+	$sql = "SELECT * FROM FPKM WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
 	$result = $conn->query($sql);
 
 	$row = $result -> fetch_assoc();
@@ -222,162 +181,147 @@ svg text.label {
 
 
 
-var data = [{"food":"rat_7973","quantity":<?php echo $row["rat_7973"]; ?>},{"food":"8050","quantity":<?php echo $row["rat_8050"]; ?>},{"food":"rat_8043","quantity":<?php echo $row["rat_8043"]; ?>},{"food":"rat_8033","quantity":<?php echo $row["rat_8033"]; ?>},{"food":"rat_8059","quantity":<?php echo $row["rat_8059"]; ?>}]
 
 
 
-var margin = {top:10, right:10, bottom:90, left:10};
-
-var width = 960 - margin.left - margin.right;
-
-var height = 500 - margin.top - margin.bottom;
-
-var xScale = d3.scale.ordinal().rangeRoundBands([0, width], .03)
-
-var yScale = d3.scale.linear()
-      .range([height, 0]);
-
-
-var xAxis = d3.svg.axis()
-		.scale(xScale)
-		.orient("bottom");
-      
-      
-var yAxis = d3.svg.axis()
-		.scale(yScale)
-		.orient("left");
-
-var svgContainer = d3.select("#chartID").append("svg")
-		.attr("width", width+margin.left + margin.right)
-		.attr("height",height+margin.top + margin.bottom)
-		.append("g").attr("class", "container")
-		.attr("transform", "translate("+ margin.left +","+ margin.top +")");
-
-xScale.domain(data.map(function(d) { return d.food; }));
-yScale.domain([0, d3.max(data, function(d) { return d.quantity; })]);
-
-
-//xAxis. To put on the top, swap "(height)" with "-5" in the translate() statement. Then you'll have to change the margins above and the x,y attributes in the svgContainer.select('.x.axis') statement inside resize() below.
-var xAxis_g = svgContainer.append("g")
-		.attr("class", "x axis")
-		.attr("transform", "translate(0," + (height) + ")")
-		.call(xAxis)
-		.selectAll("text");
-			
-// Uncomment this block if you want the y axis
-/*var yAxis_g = svgContainer.append("g")
-		.attr("class", "y axis")
-		.call(yAxis)
-		.append("text")
-		.attr("transform", "rotate(-90)")
-		.attr("y", 6).attr("dy", ".71em")
-		//.style("text-anchor", "end").text("Number of Applicatons"); 
-*/
-
-
-	svgContainer.selectAll(".bar")
-  		.data(data)
-  		.enter()
-  		.append("rect")
-  		.attr("class", "bar")
-  		.attr("x", function(d) { return xScale(d.food); })
-  		.attr("width", xScale.rangeBand())
-  		.attr("y", function(d) { return yScale(d.quantity); })
-  		.attr("height", function(d) { return height - yScale(d.quantity); });
+        <!-- Start insert grouped bar graph-->
 
 
 
+<head>
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
 
-
-// Controls the text labels at the top of each bar. Partially repeated in the resize() function below for responsiveness.
-	svgContainer.selectAll(".text")  		
-	  .data(data)
-	  .enter()
-	  .append("text")
-	  .attr("class","label")
-	  .attr("x", (function(d) { return xScale(d.food) + xScale.rangeBand() / 2 ; }  ))
-	  .attr("y", function(d) { return yScale(d.quantity) + 1; })
-	  .attr("dy", ".75em")
-	  .text(function(d) { return d.quantity; });  
-
-
-
-document.addEventListener("DOMContentLoaded", resize);
-d3.select(window).on('resize', resize); 
-
-function resize() {
-	console.log('----resize function----');
-  // update width
-  width = parseInt(d3.select('#chartID').style('width'), 10);
-  width = width - margin.left - margin.right;
-
-  height = parseInt(d3.select("#chartID").style("height"));
-  height = height - margin.top - margin.bottom;
-	console.log('----resiz width----'+width);
-	console.log('----resiz height----'+height);
-  // resize the chart
+<body>
   
-    xScale.range([0, width]);
-    xScale.rangeRoundBands([0, width], .03);
-    yScale.range([height, 0]);
 
-    yAxis.ticks(Math.max(height/50, 2));
-    xAxis.ticks(Math.max(width/50, 2));
+  <script>
+var trace1 = {
+  x: ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'], 
+  y: [<?php echo $row["rat_7973_low"]; ?>, <?php echo $row["rat_8050_low"]; ?>, <?php echo $row["rat_8043_low"]; ?>, <?php echo $row["rat_8033_low"]; ?>, <?php echo $row["rat_8059_low"]; ?>], 
+  name: 'FPKM Low', 
+  type: 'bar'
+};
 
-    d3.select(svgContainer.node().parentNode)
-        .style('width', (width + margin.left + margin.right) + 'px');
+var trace2 = {
+  x: ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'], 
+  y: [<?php echo $row["rat_7973"]; ?>, <?php echo $row["rat_8050"]; ?>, <?php echo $row["rat_8043"]; ?>, <?php echo $row["rat_8033"]; ?>, <?php echo $row["rat_8059"]; ?>],
+  name: 'FPKM', 
+  type: 'bar'
+};
 
-    svgContainer.selectAll('.bar')
-    	.attr("x", function(d) { return xScale(d.food); })
-      .attr("width", xScale.rangeBand());
-      
-   svgContainer.selectAll("text")  		
-	 // .attr("x", function(d) { return xScale(d.food); })
-	 .attr("x", (function(d) { return xScale(d.food	) + xScale.rangeBand() / 2 ; }  ))
-      .attr("y", function(d) { return yScale(d.quantity) + 1; })
-      .attr("dy", ".75em");   	      
+var trace3 = {
+  x: ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'], 
+  y: [<?php echo $row["rat_7973_high"]; ?>, <?php echo $row["rat_8050_high"]; ?>, <?php echo $row["rat_8043_high"]; ?>, <?php echo $row["rat_8033_high"]; ?>, <?php echo $row["rat_8059_high"]; ?>],
+  name: 'FPKM High', 
+  type: 'bar'
+};
 
-    svgContainer.select('.x.axis').call(xAxis.orient('bottom')).selectAll("text").attr("y",10).call(wrap, xScale.rangeBand());
-    // Swap the version below for the one above to disable rotating the titles
-    // svgContainer.select('.x.axis').call(xAxis.orient('top')).selectAll("text").attr("x",55).attr("y",-25);
-    	
-   
-}
+var data = [trace1, trace2, trace3];
+var layout = {barmode: 'group'};
+
+Plotly.newPlot('myDiv', data, layout);
+  </script>
+</body>
 
 
-function wrap(text, width) {
-  text.each(function() {
-    var text = d3.select(this),
-        words = text.text().split(/\s+/).reverse(),
-        word,
-        line = [],
-        lineNumber = 0,
-        lineHeight = 1.1, // ems
-        y = text.attr("y"),
-        dy = parseFloat(text.attr("dy")),
-        tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-    while (word = words.pop()) {
-      line.push(word);
-      tspan.text(line.join(" "));
-      if (tspan.node().getComputedTextLength() > width) {
-        line.pop();
-        tspan.text(line.join(" "));
-        line = [word];
-        tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-      }
+
+        <!-- End insert grouped bar graph-->
+
+
+        <!-- Start insert heat map-->
+
+
+
+
+<head>
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+  
+
+  <script>
+var xValues = ['<?php echo $row["gene_short_name"]; ?>'];
+
+var yValues = ['rat_7973', 'rat_8050', 'rat_8043', 'rat_8033', 'rat_8059'];
+
+var zValues = [
+  [<?php echo $row["rat_7973"]; ?>],
+  [<?php echo $row["rat_8050"]; ?>],
+  [<?php echo $row["rat_8043"]; ?>],
+  [<?php echo $row["rat_8033"]; ?>],  
+  [<?php echo $row["rat_8059"]; ?>]
+];
+
+var colorscaleValue = [
+  [0, '#3D9970'],
+  [1, '#001f3f']
+];
+
+var data = [{
+  x: xValues,
+  y: yValues,
+  z: zValues,
+  type: 'heatmap',
+  colorscale: colorscaleValue,
+  showscale: false
+}];
+
+var layout = {
+  title: 'Annotated Heatmap',
+  annotations: [],
+  xaxis: {
+    ticks: '',
+    side: 'top'
+  },
+  yaxis: {
+    ticks: '',
+    ticksuffix: ' ',
+    width: 700,
+    height: 700,
+    autosize: false
+  }
+};
+
+for ( var i = 0; i < yValues.length; i++ ) {
+  for ( var j = 0; j < xValues.length; j++ ) {
+    var currentValue = zValues[i][j];
+    if (currentValue != 0.0) {
+      var textColor = 'white';
+    }else{
+      var textColor = 'black';
     }
-  });
+    var result = {
+      xref: 'x1',
+      yref: 'y1',
+      x: xValues[j],
+      y: yValues[i],
+      text: zValues[i][j],
+      font: {
+        family: 'Arial',
+        size: 12,
+        color: 'rgb(50, 171, 96)'
+      },
+      showarrow: false,
+      font: {
+        color: textColor
+      }
+    };
+    layout.annotations.push(result);
+  }
 }
 
-</script>
-        <!-- End insert bar chart-->
+Plotly.newPlot('myDiv2', data, layout);
+  </script>
+</body>
 
 
 
 
-
-
-
+        <!-- End insert heat map-->
 
 
 
