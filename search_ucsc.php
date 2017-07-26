@@ -12,10 +12,10 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="CSS/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
+    <link href="4-col-portfolio.css" rel="stylesheet">
 
     <!-- Bootstrap JS -->
 
@@ -33,7 +33,7 @@
 
 <body>
 
-  <body background="Images/geometry.png">
+  <body background="geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -55,7 +55,7 @@
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
                               <li><a href="gene_search.php">Search Gene Data</a></li>
-                              <li><a href="graph_data.php">Graph Gene Data</a></li>
+                              <li><a href="graph_data.html">Graph Gene Data</a></li>
                               <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
                               <li><a href="fastqc.html">View FASTQC Files</a></li>
                          </ul>
@@ -107,7 +107,7 @@ else {
 ?>
 
 <?php
-	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM ucsc_search;';
+	$find_trim_status = 'SELECT DISTINCT(trim_status) FROM ucsc_search;';
 	$result_trim = $conn->query($find_trim_status);
 ?>
 
@@ -123,7 +123,7 @@ else {
 <h1>UCSC Search</h1>
 	<form action="<?php echo htmlspecialchars("search_ucsc.php")?>" method="post">
 	<div class="input-group" style="width: 40%; float: left">
-		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
+		<input type=text name="search" placeholder="Enter gene name" class="form-control">
 
 		<div class="input-group-btn">
 			
@@ -139,9 +139,9 @@ else {
         </select>
 
        <select style="height: 2.4em; width: 15em;" name="trim_status_id">
-          <option value='All'>Trimmed And Untrimmed</option>
+          <option value='All'>Trim Status</option>
           <?php while ($row = $result_trim -> fetch_object()): ?>
-          <option value='<?php echo $row->trimmed_or_untrimmed; ?>'><?php echo $row->trimmed_or_untrimmed; ?></option>
+          <option value='<?php echo $row->trim_status; ?>'><?php echo $row->trim_status; ?></option>
 		  <?php endwhile; ?>
 
         </select>
@@ -172,13 +172,24 @@ $table = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$input = htmlspecialchars($_POST["search"]);
 	$genome_input = htmlspecialchars($_POST["genome_id"]);
+	$trim_input = htmlspecialchars($_POST["trim_status_id"]);
+	$pipeline_input = htmlspecialchars($_POST["pipeline_id"]);
 }
 $len = strlen($input);
 if ($len >= 3) {
-	$sql = "SELECT * FROM ucsc_search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
+	$sql = "SELECT * FROM ucsc_search WHERE gene_short_name LIKE \"%$input%\"";
 	if ($genome_input != 'All') { 
 		$sql = $sql . " AND genome='$genome_input'";
 	}
+	
+	if ($trim_input != 'All') {
+		$sql = $sql . " AND trim_status='$trim_input'";
+	}
+	
+	if ($pipeline_input != 'All') {
+		$sql = $sql . " AND pipeline='$pipeline_input'";
+	}
+
 	$result = $conn->query($sql);
 	if (!$result) {
 printf("Error: %s\n", $conn->error);
@@ -186,20 +197,21 @@ printf("Error: %s\n", $conn->error);
 } 
 	
 else {
-	//echo $sql . "<br>";
 	$table = "";
 	function create_ucsc_link($row_assoc_array, $rat_id) {
 		$row_genome = $row_assoc_array["genome"];
-		$row_locus = $row_assoc_array["locus"];
 		$big_data_url = $row_assoc_array["bam_file_rat_$rat_id"];
+		$gene_input = $row_assoc_array["gene_short_name"];
+		$row_pipeline = $row_assoc_array["pipeline"];
+		$row_trim_status = $row_assoc_array["trim_status"];
 		
 		return "http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
-			"&position=$row_locus".
+			"&position=$gene_input".
 			"&hgct_customText=track".
 			"%20type=bam".
 			"%20name=myBigBedTrack".
-			"%20description=%22a%20bigBed".
-			"%20track%22%20visibility=full".
+			"%20description=%22$gene_input%20$row_genome".
+			"%20pipeline $row_pipeline $row_trim_status%22%20visibility=full".
 			"%20bigDataUrl=$big_data_url";
 	
 	}
@@ -207,9 +219,9 @@ else {
 	if ($input) {
 				
 		if ($result->num_rows > 0) {
-				$table = "<thead><tr> <th>Locus</th> <th>Gene ID</th><th>Gene Name</th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th>Rat 7973</th><th>Rat 8050</th><th>Rat 8043</th><th>Rat 8033</th><th>Rat 8059</th> </tr></thead>";
+				$table = "<thead><tr> <th>Gene Name</th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th>Rat 7973</th><th>Rat 8050</th><th>Rat 8043</th><th>Rat 8033</th><th>Rat 8059</th> </tr></thead>";
 			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["locus"]."</td><td>".$row["gene_id"]."</td><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["trimmed_or_untrimmed"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."<a target='_blank' href='". create_ucsc_link($row, "7973") ."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8050"]."<a target='_blank' href='".create_ucsc_link($row, "8050")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a>
+				$table .= "<tbody><tr><td><a href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."'>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["trim_status"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."<a target='_blank' href='". create_ucsc_link($row, "7973") ."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8050"]."<a target='_blank' href='".create_ucsc_link($row, "8050")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a>
 </td><td>".$row["rat_8043"]."<a target='_blank' href='".create_ucsc_link($row, "8043")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8033"]."<a target='_blank' href='".create_ucsc_link($row, "8033")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8059"]."<a target='_blank' href='".create_ucsc_link($row, "8059")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td></tr>";  
 			}
 		$table .= "</tbody>";
