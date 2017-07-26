@@ -55,7 +55,7 @@
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
                               <li><a href="gene_search.php">Search Gene Data</a></li>
-                              <li><a href="graph_data.php">Graph Gene Data</a></li>
+                              <li><a href="graph_data.html">Graph Gene Data</a></li>
                               <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
                               <li><a href="fastqc.html">View FASTQC Files</a></li>
                          </ul>
@@ -82,7 +82,7 @@
 
 
 <?php
-$db = parse_ini_file("config-file.ini");
+$db = parse_ini_file("../config-file.ini");
 // add course server to mySQL and put database on there, then change these:
 $host = $db['host'];
 $user = $db['user'];
@@ -119,13 +119,9 @@ $heading=$_GET["gene"];
 <article> 
 
 <p><td><h3><a target="_blank" href="http://www.sigmaaldrich.com/catalog/genes/<?php echo strtoupper($heading); ?>?lang=en&region=GB">View Gene Information</a></h3></td></p>
-<p><h3>Bar Graph</h3></p>
 
 <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
 
-
-
-<p><h3>Heat Map</h3></p>
 <div id="myDiv2"><!-- Plotly chart will be drawn inside this DIV --></div>
 
 
@@ -219,7 +215,7 @@ var trace3 = {
 };
 
 var data = [trace1, trace2, trace3];
-var layout = {barmode: 'group'};
+var layout = {title: 'Grouped Bar Chart', barmode: 'group'};
 
 Plotly.newPlot('myDiv', data, layout);
   </script>
