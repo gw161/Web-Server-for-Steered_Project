@@ -12,10 +12,10 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="CSS/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
+    <link href="4-col-portfolio.css" rel="stylesheet">
 
     <!-- Bootstrap JS -->
 
@@ -33,7 +33,7 @@
 
 <body>
 
-  <body background="Images/geometry.png">
+  <body background="geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -52,11 +52,10 @@
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="background.html">Background</a>
-                    </li>
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
                               <li><a href="gene_search.php">Search Gene Data</a></li>
-                              <li><a href="graph_data.php">Graph Gene Data</a></li>
+                              <li><a href="graph_data.html">Graph Gene Data</a></li>
                               <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
                               <li><a href="fastqc.html">View FASTQC Files</a></li>
                          </ul>
@@ -102,37 +101,38 @@ else {
 }
 ?>
 
+
+
+
+<!-- start insert code -->
+
+
+
+
 <?php
-	$find_genome_ids = 'SELECT DISTINCT(genome) FROM FPKM;';
+	$find_genome_ids = 'SELECT DISTINCT(genome) FROM ucsc_search;';
 	$result = $conn->query($find_genome_ids);
 ?>
 
 <?php
-	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM FPKM;';
+	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM ucsc_search;';
 	$result_trim = $conn->query($find_trim_status);
 ?>
 
 
 
 <?php
-	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM FPKM;';
+	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM ucsc_search;';
 	$result_pipeline = $conn->query($find_pipeline_id);
 ?>
 
 
   
-<h1>Gene Search</h1>
-	<form action="<?php echo htmlspecialchars("gene_search.php")?>" method="post">
-	<div class="input-group" style="width: 40%; float: left">
-		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
+<h1>UCSC Search</h1>
+	<form action="<?php echo htmlspecialchars("graph_data.php")?>" method="post">
 
-		<div class="input-group-btn">
-			
-		</div>
-	</div>
 
        <select style="height: 2.4em; width: 10em;" name="genome_id">
-          <option value='All'>All Genomes</option>
           <?php while ($row = $result -> fetch_object()): ?>
           <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
 		  <?php endwhile; ?>
@@ -140,7 +140,6 @@ else {
         </select>
 
        <select style="height: 2.4em; width: 15em;" name="trim_status_id">
-          <option value='All'>Trimmed And Untrimmed</option>
           <?php while ($row = $result_trim -> fetch_object()): ?>
           <option value='<?php echo $row->trimmed_or_untrimmed; ?>'><?php echo $row->trimmed_or_untrimmed; ?></option>
 		  <?php endwhile; ?>
@@ -148,12 +147,13 @@ else {
         </select>
 
        <select style="height: 2.4em; width: 10em;" name="pipeline_id">
-          <option value='All'>All Pipelines</option>
           <?php while ($row = $result_pipeline -> fetch_object()): ?>
           <option value='<?php echo $row->pipeline; ?>'><?php echo $row->pipeline; ?></option>
 		  <?php endwhile; ?>
 
         </select>
+
+
 
 
 			<button class="btn btn-default" type="submit">
@@ -169,57 +169,55 @@ else {
 $input = "";
 $len = "";
 $result = "";
-$table = "";
+$row_genome = "";
+$row_trim_status = "";
+$row_pipeline = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$input = htmlspecialchars($_POST["search"]);
+
 	$genome_input = htmlspecialchars($_POST["genome_id"]);
+	$trim_status_input = htmlspecialchars($_POST["trim_status_id"]);
+	$pipeline_id_input = htmlspecialchars($_POST["pipeline_id"]);
+
 }
 $len = strlen($input);
 if ($len >= 3) {
-	$sql = "SELECT * FROM FPKM WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
-	if ($genome_input != 'All') { 
-		$sql = $sql . " AND genome='$genome_input'";
-	}
+	$sql = "SELECT * FROM all2 WHERE genome='$genome_input'";
+	$sql = $sql . " AND trim_status='$trim_status_input'";
+	$sql = $sql . " AND pipeline='$pipeline_id_input'";
+
 	$result = $conn->query($sql);
 	if (!$result) {
-printf("Error: %s\n", $conn->error);
-	$table = "<strong>No results</strong>";
-} 
+		printf("Error: %s\n", $conn->error);
+	} 
 	
 else {
-	$table = "";
-	if ($input) {
 
-$input2 = $row["gene_short_name"];
-
-				
-	if ($result->num_rows > 0) {
-			$table = "<thead><tr> <th><font size='2'>Select</font></th> <th><font size='2'>Locus</font></th> <th><font size='2'>Gene ID</font></th><th><font size='2'>Gene Name</font></th> <th style='display: none;'>Genome</th> <th style='display: none;'>Trim Status</th> <th style='display: none;'>Pipeline</th> <th><font size='2'>Rat 7973 FPKM</font></th><th style='display: none;'><font size='2'>Rat 7973 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 7973 FPKM High</font></th><th><font size='2'>Rat 8050 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8050 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8050 FPKM High</font></th><th><font size='2'>Rat 8043 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8043 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8043 FPKM High</font></th><th><font size='2'>Rat 8033 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8033 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8033 FPKM High</font></th><th><font size='2'>Rat 8059 FPKM</font></th><th style='display: none;'><font size='2'>Rat 8059 FPKM Low</font></th><th style='display: none;'><font size='2'>Rat 8059 FPKM High</font></th> </tr></thead>";
-		while ($row = $result -> fetch_assoc()) {
-			$table .= "<tbody><tr><td>".$row["select"]."<a target='_blank' href='http://www.sigmaaldrich.com/catalog/genes/$input2?lang=en&region=GB'><button type='button' class='btn btn-default btn-xs'>Gene Information</button></a><br><a target='_blank' href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."&pipeline=".$row["pipeline"]."'><button type='button' class='btn btn-default btn-xs'>Plotly Graphs</button></a></td><td><font size='2'>".$row["locus"]."</font></td><td><font size='2'>".$row["gene_id"]."</font></td><td><font size='2'>".$row["gene_short_name"]."</font></a></td><td style='display: none;'>".$row["genome"]."</td><td style='display: none;'>".$row["trimmed_or_untrimmed"]."</td><td style='display: none;'>".$row["pipeline"]."</td><td><font size='2'>".$row["rat_7973"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_7973_low"]."</font></td><tdstyle='display: none;'><font size='2'>".$row["rat_7973_high"]."</font></td><td><font size='2'>".$row["rat_8050"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8050_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8050_high"]."</font></td><td><font size='2'>".$row["rat_8043"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8043_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8043_high"]."</font></td><td><font size='2'>".$row["rat_8033"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8033_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8033_high"]."</font></td><td><font size='2'>".$row["rat_8059"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8059_low"]."</font></td><td style='display: none;'><font size='2'>".$row["rat_8059_high"]."</font></td></tr>";  
+	
+	if ($input) {		
+		if ($result->num_rows > 0) {
+			$row = $result -> fetch_assoc();
+			echo "<br><iframe src='http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
+			"&position=$row_trim_status".
+			"&hgct_customText=track".
+			"%20type=bam".
+			"%20name=myBigBedTrack".
+			"%20description=%22a%20bigBed".
+			"%20track%22%20visibility=full".
+			"%20bigDataUrl=$row_pipeline' width='100%' height='500'></iframe>";
 		}
-		$table .= "</tbody>";
-	} 
-	else { 
-		$table = "<strong>No results</strong>"; 
-	}
 	}
 }
-}
-else {
-	print "<p style='clear: both;'>Please enter at least 3 characters.</p>";
 }
 		
 ?>
+
+<!-- end insert code -->
+
 
 
 <?php $conn->close();?>
 
 
-
-<div class="table-responsive">
-	<table class="table"><?php echo $table;?></table>
-</div>
 
 <span class="col-sm-2"></span>
 
