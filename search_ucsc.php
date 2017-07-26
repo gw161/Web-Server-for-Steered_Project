@@ -12,10 +12,10 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="CSS/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="4-col-portfolio.css" rel="stylesheet">
+    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
 
     <!-- Bootstrap JS -->
 
@@ -33,7 +33,7 @@
 
 <body>
 
-  <body background="geometry.png">
+  <body background="Images/geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -84,7 +84,7 @@
                 </h1>
 
 <?php
-$db = parse_ini_file("config-file.ini");
+$db = parse_ini_file("../config-file.ini");
 // add course server to mySQL and put database on there, then change these:
 $host = $db['host'];
 $user = $db['user'];
