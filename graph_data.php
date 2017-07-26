@@ -12,10 +12,10 @@
     <title>Group A Steered Research Project</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="CSS/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
+    <link href="4-col-portfolio.css" rel="stylesheet">
 
     <!-- Bootstrap JS -->
 
@@ -33,7 +33,7 @@
 
 <body>
 
-  <body background="Images/geometry.png">
+  <body background="geometry.png">
  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -55,7 +55,7 @@
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
                               <li><a href="gene_search.php">Search Gene Data</a></li>
-                              <li><a href="graph_data.php">Graph Gene Data</a></li>
+                              <li><a href="graph_data.html">Graph Gene Data</a></li>
                               <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
                               <li><a href="fastqc.html">View FASTQC Files</a></li>
                          </ul>
@@ -101,6 +101,14 @@ else {
 }
 ?>
 
+
+
+
+<!-- start insert code -->
+
+
+
+
 <?php
 	$find_genome_ids = 'SELECT DISTINCT(genome) FROM ucsc_search;';
 	$result = $conn->query($find_genome_ids);
@@ -122,13 +130,7 @@ else {
   
 <h1>UCSC Search</h1>
 	<form action="<?php echo htmlspecialchars("graph_data.php")?>" method="post">
-	<div class="input-group" style="width: 30%; float: left">
-		<input type=text name="search" placeholder="Enter gene name or ID" class="form-control">
 
-		<div class="input-group-btn">
-			
-		</div>
-	</div>
 
        <select style="height: 2.4em; width: 10em;" name="genome_id">
           <?php while ($row = $result -> fetch_object()): ?>
@@ -151,13 +153,7 @@ else {
 
         </select>
 
-		<select style="height: 2.4em; width: 10em;" name="rat_id">
-			<option value='7973'>Rat 7973</option>
-			<option value='8050'>Rat 8050</option>
-			<option value='8043'>Rat 8043</option>
-			<option value='8033'>Rat 8033</option>
-			<option value='8059'>Rat 8059</option>
-        </select>
+
 
 
 			<button class="btn btn-default" type="submit">
@@ -173,18 +169,20 @@ else {
 $input = "";
 $len = "";
 $result = "";
+$row_genome = "";
+$row_trim_status = "";
+$row_pipeline = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$input = htmlspecialchars($_POST["search"]);
+
 	$genome_input = htmlspecialchars($_POST["genome_id"]);
 	$trim_status_input = htmlspecialchars($_POST["trim_status_id"]);
 	$pipeline_id_input = htmlspecialchars($_POST["pipeline_id"]);
-	$rat_id_input = htmlspecialchars($_POST["rat_id"]);
+
 }
 $len = strlen($input);
 if ($len >= 3) {
-	$sql = "SELECT * FROM ucsc_search WHERE gene_id LIKE \"%$input%\" OR gene_short_name LIKE \"%$input%\"";
-	$sql = $sql . " AND genome='$genome_input'";
-	$sql = $sql . " AND trimmed_or_untrimmed='$trim_status_input'";
+	$sql = "SELECT * FROM all2 WHERE genome='$genome_input'";
+	$sql = $sql . " AND trim_status='$trim_status_input'";
 	$sql = $sql . " AND pipeline='$pipeline_id_input'";
 
 	$result = $conn->query($sql);
@@ -193,33 +191,28 @@ if ($len >= 3) {
 	} 
 	
 else {
-	function create_ucsc_link($row_assoc_array, $rat_id) {
-		$row_genome = $row_assoc_array["genome"];
-		$row_locus = $row_assoc_array["locus"];
-		$big_data_url = $row_assoc_array["bam_file_rat_$rat_id"];
-		
-		return "http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
-			"&position=$row_locus".
+
+	
+	if ($input) {		
+		if ($result->num_rows > 0) {
+			$row = $result -> fetch_assoc();
+			echo "<br><iframe src='http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
+			"&position=$row_trim_status".
 			"&hgct_customText=track".
 			"%20type=bam".
 			"%20name=myBigBedTrack".
 			"%20description=%22a%20bigBed".
 			"%20track%22%20visibility=full".
-			"%20bigDataUrl=$big_data_url";
-	
-	}
-	
-	if ($input) {		
-		if ($result->num_rows > 0) {
-			$row = $result -> fetch_assoc();
-			$link = create_ucsc_link($row, $rat_id_input);
-			echo "<br><iframe src='$link' width='100%' height='500'></iframe>";
+			"%20bigDataUrl=$row_pipeline' width='100%' height='500'></iframe>";
 		}
 	}
 }
 }
 		
 ?>
+
+<!-- end insert code -->
+
 
 
 <?php $conn->close();?>
