@@ -46,19 +46,18 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="background.html">Background</a>
+                        <a href="background.html">Analysis Summary</a>
                     </li>
-		    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		  	<ul class="dropdown-menu">
-				<li><a href="gene_search.php">Search by Gene</a></li>
-				<li><a href="search_ucsc.php">Genome Browser</a></li>
-				<li><a href="fastqc.html">FASTQC</a></li>
-			</ul>
-		    </li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+                         <ul class="dropdown-menu">
+                              <li><a href="gene_search.php">Expression Levels</a></li>
+                              <li><a href="diff_exp.php">Differential Expression</a></li>
+                              <li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
+                              <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
+                              <li><a href="fastqc.html">View FastQC Files</a></li>
+                         </ul>
+                    </li>
                     <li>
-                        <a href="image_archive.html">Image Archive</a>
-                    </li>
-                      <li>
                         <a href="team.html">Team</a>
                     </li>
                 </ul>
@@ -74,18 +73,79 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">FASTQC Files
-                    <small>Secondary Text</small>
+                <h1 class="page-header">FastQC Files
                 </h1>
 
 <article>
   <h3>Control Rats</h3>
-  <p><a target="_blank" href="SRR1177973_fastqc.html">7973</a></p> 
-  <p><a target="_blank" href="SRR1178050_fastqc.html">8050</a></p> 
+ <table style="width:50%">
+  <tr>
+    <th>Untrimmed Paired End 1</th>
+    <th>Trimmed Paired End 1</th>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1177973_untrimmed_paired_end_1_fastqc.html">7973</a></td>
+    <td><a target="_blank" href="SRR1177973_trimmed_paired_end_1_fastqc.html">7973</a></td>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178050_untrimmed_paired_end_1_fastqc.html">8050</a></td>
+    <td><a target="_blank" href="SRR1178050_trimmed_paired_end_1_fastqc.html">8050</a></td>
+  </tr>
+</table> 
+ <table style="width:50%">
+  <tr>
+    <th>Untrimmed Paired End 2</th>
+    <th>Trimmed Paired End 2</th>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1177973_untrimmed_paired_end_2_fastqc.html">7973</a></td>
+    <td><a target="_blank" href="SRR1177973_trimmed_paired_end_2_fastqc.html">7973</a></td>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178050_untrimmed_paired_end_2_fastqc.html">8050</a></td>
+    <td><a target="_blank" href="SRR1178050_trimmed_paired_end_2_fastqc.html">8050</a></td>
+  </tr>
+</table> 
+  <p></p> 
+  <p></p> 
   <h3>Test Rats</h3>
-  <p><a target="_blank" href="SRR1178033_fastqc.html">8033</a></p> 
-  <p><a target="_blank" href="SRR1178043_fastqc.html">8043</a></p> 
-  <p><a target="_blank" href="SRR1178059_fastqc.html">8059</a></p> 
+
+ <table style="width:50%">
+  <tr>
+    <th>Untrimmed Paired End 1</th>
+    <th>Trimmed Paired End 1</th>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178033_untrimmed_paired_end_1_fastqc.html">8033</a></td>
+    <td><a target="_blank" href="SRR1178033_trimmed_paired_end_1_fastqc.html">8033</a></td>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178043_untrimmed_paired_end_1_fastqc.html">8043</a></td>
+    <td><a target="_blank" href="SRR1178043_trimmed_paired_end_1_fastqc.html">8043</a></td>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178059_untrimmed_paired_end_1_fastqc.html">8059</a></td>
+    <td><a target="_blank" href="SRR1178059_trimmed_paired_end_1_fastqc.html">8059</a></td>
+  </tr>
+</table> 
+ <table style="width:50%">
+  <tr>
+    <th>Untrimmed Paired End 2</th>
+    <th>Trimmed Paired End 2</th>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178033_untrimmed_paired_end_2_fastqc.html">8033</a></td>
+    <td><a target="_blank" href="SRR1178033_trimmed_paired_end_2_fastqc.html">8033</a></td>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178043_untrimmed_paired_end_2_fastqc.html">8043</a></td>
+    <td><a target="_blank" href="SRR1178043_trimmed_paired_end_2_fastqc.html">8043</a></td>
+  </tr>
+  <tr>
+    <td><a target="_blank" href="SRR1178059_untrimmed_paired_end_2_fastqc.html">8059</a></td>
+    <td><a target="_blank" href="SRR1178059_trimmed_paired_end_2_fastqc.html">8059</a></td>
+  </tr>
+</table> 
 </article>
 
 
