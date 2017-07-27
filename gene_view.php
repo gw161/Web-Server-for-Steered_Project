@@ -54,10 +54,11 @@
                     </li>
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
-                              <li><a href="gene_search.php">Search Gene Data</a></li>
-                              <li><a href="graph_data.html">Graph Gene Data</a></li>
+                              <li><a href="gene_search.php">Expression Levels</a></li>
+                              <li><a href="diff_exp.php">Differential Expression</a></li>
+                              <li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
                               <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
-                              <li><a href="fastqc.html">View FASTQC Files</a></li>
+                              <li><a href="fastqc.html">View FastQC Files</a></li>
                          </ul>
                     </li>
                     <li>
@@ -109,13 +110,12 @@ $heading='';
 $heading=$_GET["gene"];
 ?>
 
-	<h1 class="page-header"><b><?php echo $heading; ?></b>
-		<small>FPKM Values (Pipeline 5) or Counts (Pipeline 6) Per Rat</small>
+	<h1 class="page-header"><b>Plotly Bar Chart: <?php echo $heading; ?>, <?php echo $row["genome"]; ?>, Pipeline <?php echo $row["pipeline"]; ?>, <?php echo $row["trim_status"]; ?></b>
 	</h1>
 
 <article> 
 
-<div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+ <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
 
 
 
@@ -185,35 +185,39 @@ $heading=$_GET["gene"];
 
 <body>
   
-
+  <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
   <script>
+var xValue = ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'];
+
+var yValue = [<?php echo $row["rat_7973"]; ?>, <?php echo $row["rat_8050"]; ?>, <?php echo $row["rat_8043"]; ?>, <?php echo $row["rat_8033"]; ?>, <?php echo $row["rat_8059"]; ?>];
+
 var trace1 = {
-  x: ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'], 
-  y: [<?php echo $row["rat_7973_low"]; ?>, <?php echo $row["rat_8050_low"]; ?>, <?php echo $row["rat_8043_low"]; ?>, <?php echo $row["rat_8033_low"]; ?>, <?php echo $row["rat_8059_low"]; ?>], 
-  name: 'FPKM Low', 
-  type: 'bar'
+  x: xValue, 
+  y: yValue,
+  type: 'bar',
+  text: yValue,
+  textposition: 'auto',
+  hoverinfo: 'none',
+  marker: {
+    color: 'rgb(158,202,225)',
+    opacity: 0.6,
+    line: {
+      color: 'rbg(8,48,107)',
+      width: 1.5
+    }
+  }
 };
 
-var trace2 = {
-  x: ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'], 
-  y: [<?php echo $row["rat_7973"]; ?>, <?php echo $row["rat_8050"]; ?>, <?php echo $row["rat_8043"]; ?>, <?php echo $row["rat_8033"]; ?>, <?php echo $row["rat_8059"]; ?>],
-  name: 'FPKM', 
-  type: 'bar'
-};
+var data = [trace1];
 
-var trace3 = {
-  x: ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'], 
-  y: [<?php echo $row["rat_7973_high"]; ?>, <?php echo $row["rat_8050_high"]; ?>, <?php echo $row["rat_8043_high"]; ?>, <?php echo $row["rat_8033_high"]; ?>, <?php echo $row["rat_8059_high"]; ?>],
-  name: 'FPKM High', 
-  type: 'bar'
+var layout = {
+  title: 'FPKM Values (Pipeline 5) or Counts (Pipeline 6) Per Rat'
 };
-
-var data = [trace1, trace2, trace3];
-var layout = {title: 'Grouped Bar Chart', barmode: 'group'};
 
 Plotly.newPlot('myDiv', data, layout);
   </script>
 </body>
+
 
 
 
