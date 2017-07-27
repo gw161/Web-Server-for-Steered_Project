@@ -2,66 +2,67 @@
 <html lang="en">
 
 <head>
+    
+	<!-- Declaration of meta tags -->
+	<meta charset="utf-8">
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<meta name="description" content="">
+    	<meta name="author" content="">
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    	<title>Group A Steered Research Project</title>
 
-    <title>Group A Steered Research Project</title>
+    	<!-- Bootstrap Core CSS -->
+    	<link href="CSS/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap Core CSS -->
-    <link href="CSS/bootstrap.min.css" rel="stylesheet">
+    	<!-- Custom CSS -->
+    	<link href="CSS/4-col-portfolio.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="CSS/4-col-portfolio.css" rel="stylesheet">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+    	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    	<!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    	<![endif]-->
 
 </head>
 
 <body>
 
-  <body background="Images/geometry.png">
- <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<body background="Images/geometry.png">
+ 	<!-- Navigation -->
+    	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="index.html">Project Webserver</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="background.html">Analysis Summary</a>
-                    </li>
-                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-                         <ul class="dropdown-menu">
-                              <li><a href="gene_search.php">Expression Levels</a></li>
-                              <li><a href="diff_exp.php">Differential Expression</a></li>
-                              <li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
-                              <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
-                              <li><a href="fastqc.html">View FastQC Files</a></li>
-                         </ul>
-                    </li>
-                    <li>
-                        <a href="team.html">Team</a>
-                    </li>
-                </ul>
-            </div>
+        	<div class="navbar-header">
+                	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    		<span class="sr-only">Toggle navigation</span>
+                    		<span class="icon-bar"></span>
+                   		<span class="icon-bar"></span>
+                    		<span class="icon-bar"></span>
+                	</button>
+                	<a class="navbar-brand" href="index.html">Project Webserver</a>
+            	</div>
+            	<!-- Collect the nav links, forms, and other content for toggling -->
+            	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                	<ul class="nav navbar-nav">
+                    		<li>
+                        		<a href="background.html">Analysis Summary</a>
+                    		</li>
+                    		<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+                         		<ul class="dropdown-menu">
+                              			<li><a href="gene_search.php">Expression Levels</a></li>
+                              			<li><a href="diff_exp.php">Differential Expression</a></li>
+                              			<li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
+                              			<li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
+                              			<li><a href="fastqc.html">View FastQC Files</a></li>
+                       			</ul>
+                    		</li>
+                    		<li>
+                        		<a href="team.html">Team</a>
+                    		</li>
+                	</ul>
+            	</div>
             <!-- /.navbar-collapse -->
         </div>
         <!-- /.container -->
@@ -78,26 +79,26 @@
                 </h1>
 
 		<article>
-		<font size="3">
-		<p>The goal of this project is to replicate Dr. Wang et al's expression data and make our data accessible and searchable on this website. Please view "Analysis Summary" for more details about our work. </p> 
- 		<p><h4><u>About the Navigation Bar:</u></h4></p>
-  		<p><b>Project Webserver:</b> The homepage</p> 
-  		<p><b>Analysis Summary:</b> A detailed summary of our work</p>
-  		<p><b>Data Dropdown:</b></p> 
-			<ul>
-  				<li><b>Expression Levels:</b> Query a gene and select from genome, trim status and pipeline options in order to extract FPKM values for pipeline 5, counts for pipeline 6. Two buttons available for "Gene Information" and "Graph Plotly."
-				</li>
+			<font size="3">
+				<p>The goal of this project is to replicate Dr. Wang et al's expression data and make our data accessible and searchable on this website. Please view "Analysis Summary" for more details about our work. </p> 
+ 				<p><h4><u>About the Navigation Bar:</u></h4></p>
+  				<p><b>Project Webserver:</b> The homepage</p> 
+  				<p><b>Analysis Summary:</b> A detailed summary of our work</p>
+  				<p><b>Data Dropdown:</b></p> 
+				<ul>
+  					<li><b>Expression Levels:</b> Query a gene and select from genome, trim status and pipeline options in order to extract FPKM values for pipeline 5, counts for pipeline 6. Two buttons available for "Gene Information" and "Graph Plotly."
+					</li>
 					<ul>
   						<li> <b>"Gene Information" button:</b> View information on queried gene.
   						<li> <b>"Graph Plotly" button:</b> View a Plotly bar chart for queried gene, genome, trim status and pipeline.
 					</ul>
-  				<li><b>Differential Expression:</b> Query a gene and select from genome, trim status and pipeline options in order to extract logFC values, p values, and whether or not the query is differentially expressed. </li>
-  				<li><b>Volcano Plot with R Shiny:</b> Enter logFC and p values and choose genome, pipeline and trim status to form a volcano plot with R Shiny. Other options include only visualising upregulated genes or both downregulated and upregulated genes. The user could also enter the amount of genes to display. A value of 100 for instance would display the top 100 genes that fall within greater than 1.5 or less than -1.5 for the logFC and less than 0.05 for the p value. Also, the user could choose to only display the selected range.</li>
-				<li><b>Visualise Mapped Data:</b> Query a gene and select from genome, trim status and pipeline options in order to visualise the gene on the UCSC Genome Browser. </li>
-				<li><b>View FastQC Files:</b> View quality reports on fastq sequences per rat.</li>
-			</ul>
-  <p><b>Team:</b> Meet the team involved with the project! </p> 
-		</font>
+  					<li><b>Differential Expression:</b> Query a gene and select from genome, trim status and pipeline options in order to extract logFC values, p values, and whether or not the query is differentially expressed. </li>
+  					<li><b>Volcano Plot with R Shiny:</b> Enter logFC and p values and choose genome, pipeline and trim status to form a volcano plot with R Shiny. Other options include only visualising upregulated genes or both downregulated and upregulated genes. The user could also enter the amount of genes to display. A value of 100 for instance would display the top 100 genes that fall within greater than 1.5 or less than -1.5 for the logFC and less than 0.05 for the p value. Also, the user could choose to only display the selected range.</li>
+					<li><b>Visualise Mapped Data:</b> Query a gene and select from genome, trim status and pipeline options in order to visualise the gene on the UCSC Genome Browser. </li>
+					<li><b>View FastQC Files:</b> View quality reports on fastq sequences per rat.</li>
+				</ul>
+  				<p><b>Team:</b> Meet the team involved with the project! </p> 
+			</font>
 		</article>
             </div>
         </div>
