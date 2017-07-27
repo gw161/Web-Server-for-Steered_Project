@@ -51,7 +51,8 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="background.html">Background</a>
+                        <a href="background.html">Analysis Summary</a>
+                    </li>
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
                               <li><a href="gene_search.php">Search Gene Data</a></li>
@@ -61,9 +62,6 @@
                          </ul>
                     </li>
                     <li>
-                        <a href="image_archive.html">Image Archive</a>
-                    </li>
-                      <li>
                         <a href="team.html">Team</a>
                     </li>
                 </ul>
@@ -79,8 +77,7 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Project Webserver
-                    <small>A is for Awesome</small>
+                <h1 class="page-header">Search Gene Data
                 </h1>
 
 <?php
@@ -101,38 +98,36 @@ else {
 }
 ?>
 
-
-
-
-<!-- start insert code -->
-
-
-
-
 <?php
-	$find_genome_ids = 'SELECT DISTINCT(genome) FROM ucsc_search;';
+	$find_genome_ids = 'SELECT DISTINCT(genome) FROM FPKM_and_counts;';
 	$result = $conn->query($find_genome_ids);
 ?>
 
 <?php
-	$find_trim_status = 'SELECT DISTINCT(trimmed_or_untrimmed) FROM ucsc_search;';
+	$find_trim_status = 'SELECT DISTINCT(trim_status) FROM FPKM_and_counts;';
 	$result_trim = $conn->query($find_trim_status);
 ?>
 
 
 
 <?php
-	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM ucsc_search;';
+	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM FPKM_and_counts;';
 	$result_pipeline = $conn->query($find_pipeline_id);
 ?>
 
 
-  
-<h1>UCSC Search</h1>
-	<form action="<?php echo htmlspecialchars("graph_data.php")?>" method="post">
 
+	<form action="<?php echo htmlspecialchars("gene_search.php")?>" method="post">
+	<div class="input-group" style="width: 40%; float: left">
+		<input type=text name="search" placeholder="Enter gene name to search" class="form-control">
+
+		<div class="input-group-btn">
+			
+		</div>
+	</div>
 
        <select style="height: 2.4em; width: 10em;" name="genome_id">
+          <option value='All'>All Genomes</option>
           <?php while ($row = $result -> fetch_object()): ?>
           <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
 		  <?php endwhile; ?>
@@ -140,13 +135,15 @@ else {
         </select>
 
        <select style="height: 2.4em; width: 15em;" name="trim_status_id">
+          <option value='All'>Trimmed And Untrimmed</option>
           <?php while ($row = $result_trim -> fetch_object()): ?>
-          <option value='<?php echo $row->trimmed_or_untrimmed; ?>'><?php echo $row->trimmed_or_untrimmed; ?></option>
+          <option value='<?php echo $row->trim_status; ?>'><?php echo $row->trim_status; ?></option>
 		  <?php endwhile; ?>
 
         </select>
 
        <select style="height: 2.4em; width: 10em;" name="pipeline_id">
+          <option value='All'>All Pipelines</option>
           <?php while ($row = $result_pipeline -> fetch_object()): ?>
           <option value='<?php echo $row->pipeline; ?>'><?php echo $row->pipeline; ?></option>
 		  <?php endwhile; ?>
@@ -154,11 +151,7 @@ else {
         </select>
 
 
-
-
-			<button class="btn btn-default" type="submit">
-				<i class="glyphicon glyphicon-search"></i>
-			</button>
+<button type="submit" class="btn btn-default">Submit</button>
 
 
 
@@ -169,55 +162,65 @@ else {
 $input = "";
 $len = "";
 $result = "";
-$row_genome = "";
-$row_trim_status = "";
-$row_pipeline = "";
+$table = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
+	$input = htmlspecialchars($_POST["search"]);
 	$genome_input = htmlspecialchars($_POST["genome_id"]);
-	$trim_status_input = htmlspecialchars($_POST["trim_status_id"]);
-	$pipeline_id_input = htmlspecialchars($_POST["pipeline_id"]);
-
+	$trim_input = htmlspecialchars($_POST["trim_status_id"]);
+	$pipeline_input = htmlspecialchars($_POST["pipeline_id"]);
 }
 $len = strlen($input);
 if ($len >= 3) {
-	$sql = "SELECT * FROM all2 WHERE genome='$genome_input'";
-	$sql = $sql . " AND trim_status='$trim_status_input'";
-	$sql = $sql . " AND pipeline='$pipeline_id_input'";
+	$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$input%\"";
+	if ($genome_input != 'All') { 
+		$sql = $sql . " AND genome='$genome_input'";
+	}
+	
+	if ($trim_input != 'All') {
+		$sql = $sql . " AND trim_status='$trim_input'";
+	}
+	
+	if ($pipeline_input != 'All') {
+		$sql = $sql . " AND pipeline='$pipeline_input'";
+	}
 
 	$result = $conn->query($sql);
 	if (!$result) {
-		printf("Error: %s\n", $conn->error);
-	} 
+printf("Error: %s\n", $conn->error);
+	$table = "<strong>No results</strong>";
+} 
 	
 else {
-
-	
-	if ($input) {		
-		if ($result->num_rows > 0) {
-			$row = $result -> fetch_assoc();
-			echo "<br><iframe src='http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
-			"&position=$row_trim_status".
-			"&hgct_customText=track".
-			"%20type=bam".
-			"%20name=myBigBedTrack".
-			"%20description=%22a%20bigBed".
-			"%20track%22%20visibility=full".
-			"%20bigDataUrl=$row_pipeline' width='100%' height='500'></iframe>";
+	$table = "";
+	if ($input) {
+				
+	if ($result->num_rows > 0) {
+			$table = "<thead><tr> <th><font size='2'>Select</font></th> <th><font size='2'>Gene Name</font></th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th><font size='2'>Rat 7973 FPKM/Counts</font></th><th><font size='2'>Rat 8050 FPKM/Counts</font></th><th><font size='2'>Rat 8043 FPKM/Counts</font></th><th><font size='2'>Rat 8033 FPKM/Counts</font></th><th><font size='2'>Rat 8059 FPKM/Counts</font></th> </tr></thead>";
+		while ($row = $result -> fetch_assoc()) {
+			$table .= "<tbody><tr><td>".$row["click"]."<a target='_blank' href='http://www.sigmaaldrich.com/catalog/genes/".$row["gene_short_name"]."?lang=en&region=GB'><button type='button' class='btn btn-default btn-xs'>Gene Information</button></a><br><a target='_blank' href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."&pipeline=".$row["pipeline"]."'><button type='button' class='btn btn-default btn-xs'>Plotly Bar Chart</button></a></td><td><font size='2'>".$row["gene_short_name"]."</font></a></td><td>".$row["genome"]."</td><td>".$row["trim_status"]."</td><td>".$row["pipeline"]."</td><td><font size='2'>".$row["rat_7973"]."</font></td><td><font size='2'>".$row["rat_8050"]."</font></td><td><font size='2'>".$row["rat_8043"]."</font></td><td><font size='2'>".$row["rat_8033"]."</font></td><td><font size='2'>".$row["rat_8059"]."</font></td></tr>";  
 		}
+		$table .= "</tbody>";
+	} 
+	else { 
+		$table = "<strong>No results</strong>"; 
+	}
 	}
 }
 }
+else {
+	print "<p style='clear: both;'>Please enter at least 3 characters.</p>";
+}
 		
 ?>
-
-<!-- end insert code -->
-
 
 
 <?php $conn->close();?>
 
 
+
+<div class="table-responsive">
+	<table class="table"><?php echo $table;?></table>
+</div>
 
 <span class="col-sm-2"></span>
 
@@ -228,7 +231,7 @@ else {
         </div>
         <!-- /.row -->
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br>
 
         <hr>
 
