@@ -46,19 +46,18 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="background.html">Background</a>
+                        <a href="background.html">Analysis Summary</a>
                     </li>
-		    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		   	<ul class="dropdown-menu">
-				<li><a href="gene_search.php">Search by Gene</a></li>
-				<li><a href="search_ucsc.php">Genome Browser</a></li>
-				<li><a href="fastqc.html">FASTQC</a></li>
-			</ul>
-		    </li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+                         <ul class="dropdown-menu">
+                              <li><a href="gene_search.php">Expression Levels</a></li>
+                              <li><a href="diff_exp.php">Differential Expression</a></li>
+                              <li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
+                              <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
+                              <li><a href="fastqc.html">View FastQC Files</a></li>
+                         </ul>
+                    </li>
                     <li>
-                        <a href="image_archive.html">Image Archive</a>
-                    </li>
-                      <li>
                         <a href="team.html">Team</a>
                     </li>
                 </ul>
@@ -74,29 +73,28 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Page Heading
-                    <small>Secondary Text</small>
+                <h1 class="page-header">Summary of Our Analysis
                 </h1>
 
-<article>
-  <img src="Images/sample.jpg" align="right">
-  <h1>London</h1>
-  <p>This research is based upon the work of Wang <i>et al</i><sup> [1]</sup> and his colleagues. Their primary aim was to determine efficacy of RNA-seq analysis in comparison to Micro-array style of transcript recovery. </p> 
-  <p>Placeholder.</p>
+		<article>
+		<font size="3">
+		<p>- Why used particular rats?</p>
+		<p>- Why carried out particular pipeline?</p>
+		<p>- Why picked Gemifibrozil?</p>
+		<p>- Why picked rn4 and rn6?</p>
+		<p>- Describing what website is showing:</p>
+		<p>-User queries gene and sees FPKM/counts on gene_search.php (what do FPKM and counts mean?)</p>
+		<p>-User also could query gene and search UCSC browser on search_ucsc.php (what is being viewed on UCSC browser?)</p>
+		<p>-User also could enter p value and logfc on graph_data.html and a volcano plot is formed, what is this volcano plot showing?</p>
+		<p>- When hits rat with drug, genes go up or down or doesn’t change. Particular drug gemfibrozil. Picked 5 rats, genomes, pipelines. Which gene is most diff expressed, diff between control vs test.</p>
+		<p>-what are the fastQC files?</p>
+		<p>-User also queries gene and sees p values, logFC values and whether what they selected is differentially expressed (logFC greater than 1.5 and p value less than 0.05) on diff_exp.php</p>
+</font>
 </article>
-<div class="col-wrapper">
-    <div class="col col-670">[Page Content]</div>
-    <div class="col col-250">[Page Sidebar]</div>
-</div>
-
-<footer><sub>[1] Wang, C., Gong, B., Bushel, P.R., Thierry-Mieg, J., Thierry-Mieg, D., Xu, J., Fang, H., Hong, H., Shen, J., Su, Z., Meehan, J., Li, X., Yang, L., Li, H., Łabaj, P.P., Kreil, D.P., Megherbi, D., Gaj, S., Caiment, F., van Delft, J., Kleinjans, J., Scherer, A., Devanarayan, V., Wang, J., Yang, Y., Qian, H., Lancashire, L.J., Bessarabova, M., Nikolsky, Y., Furlanello, C., Chierici, M., Albanese, D., Jurman, G., Riccadonna, S., Filosi, M., Visintainer, R., Zhang, K.K., Li, J., Hsieh, J., Svoboda, D.L., Fuscoe, J.C., Deng, Y., Shi, L., Paules, R.S., Auerbach, S.S. and Tong, W. (2014) 'The concordance between RNA-seq and microarray data depends on chemical treatment and transcript abundance', Nature biotechnology, 32(9), pp. 926.</sub></footer>
-
 
             </div>
         </div>
         <!-- /.row -->
-
-
 
         <hr>
 
