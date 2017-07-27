@@ -46,19 +46,18 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="background.html">Background</a>
+                        <a href="background.html">Analysis Summary</a>
                     </li>
-		    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
-		   	<ul class="dropdown-menu">
-				<li><a href="gene_search.php">Search by Gene</a></li>
-				<li><a href="search_ucsc.php">Genome Browser</a></li>
-				<li><a href="fastqc.html">FASTQC</a></li>
-			</ul>
-		    </li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
+                         <ul class="dropdown-menu">
+                              <li><a href="gene_search.php">Expression Levels</a></li>
+                              <li><a href="diff_exp.php">Differential Expression</a></li>
+                              <li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
+                              <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
+                              <li><a href="fastqc.html">View FastQC Files</a></li>
+                         </ul>
+                    </li>
                     <li>
-                        <a href="image_archive.html">Image Archive</a>
-                    </li>
-                      <li>
                         <a href="team.html">Team</a>
                     </li>
                 </ul>
@@ -78,38 +77,37 @@
                     <small>A is for Awesome</small>
                 </h1>
 
-<article>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-  <p>blah blah blah </p> 
-  <p>Blah blah.</p>
-</article>
-
-
-
+		<article>
+		<font size="3">
+		<p>The goal of this project is to replicate Dr. Wang et al's expression data and make our data accessible and searchable on this website. Please view "Analysis Summary" for more details about our work. </p> 
+ 		<p><h4><u>About the Navigation Bar:</u></h4></p>
+  		<p><b>Project Webserver:</b> The homepage</p> 
+  		<p><b>Analysis Summary:</b> A detailed summary of our work</p>
+  		<p><b>Data Dropdown:</b></p> 
+			<ul>
+  				<li><b>Expression Levels:</b> Query a gene and select from genome, trim status and pipeline options in order to extract FPKM values for pipeline 5, counts for pipeline 6. Two buttons available for "Gene Information" and "Graph Plotly."
+				</li>
+					<ul>
+  						<li> <b>"Gene Information" button:</b> View information on queried gene.
+  						<li> <b>"Graph Plotly" button:</b> View a Plotly bar chart for queried gene, genome, trim status and pipeline.
+					</ul>
+  				<li><b>Differential Expression:</b> Query a gene and select from genome, trim status and pipeline options in order to extract logFC values, p values, and whether or not the query is differentially expressed. </li>
+  				<li><b>Volcano Plot with R Shiny:</b> Enter logFC and p values and choose genome, pipeline and trim status to form a volcano plot with R Shiny. Other options include only visualising upregulated genes or both downregulated and upregulated genes. The user could also enter the amount of genes to display. A value of 100 for instance would display the top 100 genes that fall within greater than 1.5 or less than -1.5 for the logFC and less than 0.05 for the p value. Also, the user could choose to only display the selected range.</li>
+				<li><b>Visualise Mapped Data:</b> Query a gene and select from genome, trim status and pipeline options in order to visualise the gene on the UCSC Genome Browser. </li>
+				<li><b>View FastQC Files:</b> View quality reports on fastq sequences per rat.</li>
+			</ul>
+  <p><b>Team:</b> Meet the team involved with the project! </p> 
+		</font>
+		</article>
             </div>
         </div>
+
         <!-- /.row -->
-
-
 
         <hr>
 
         <!-- Footer -->
+
         <footer>
             <div class="row">
                 <div class="col-lg-12">
@@ -118,8 +116,8 @@
             </div>
             <!-- /.row -->
         </footer>
-
     </div>
+
     <!-- /.container -->
 
     <!-- jQuery -->
