@@ -50,7 +50,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="background.html">Background</a>
+                        <a href="background.html">Analysis Summary</a>
                     </li>
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
@@ -61,9 +61,6 @@
                          </ul>
                     </li>
                     <li>
-                        <a href="image_archive.html">Image Archive</a>
-                    </li>
-                      <li>
                         <a href="team.html">Team</a>
                     </li>
                 </ul>
@@ -101,7 +98,7 @@ else {
 
 <?php
 $heading='';
-	$sql = "SELECT * FROM FPKM WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
+	$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\"";
 	$result = $conn->query($sql);
 
 	$row = $result -> fetch_assoc();
@@ -113,16 +110,13 @@ $heading=$_GET["gene"];
 ?>
 
 	<h1 class="page-header"><b><?php echo $heading; ?></b>
-		<small>FPKM Values (Expression Level) Per Rat</small>
+		<small>FPKM Values (Pipeline 5) or Counts (Pipeline 6) Per Rat</small>
 	</h1>
 
 <article> 
 
-<p><td><h3><a target="_blank" href="http://www.sigmaaldrich.com/catalog/genes/<?php echo strtoupper($heading); ?>?lang=en&region=GB">View Gene Information</a></h3></td></p>
-
 <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
 
-<div id="myDiv2"><!-- Plotly chart will be drawn inside this DIV --></div>
 
 
 </article>
@@ -168,7 +162,7 @@ $heading=$_GET["gene"];
 
 
 <?php
-	$sql = "SELECT * FROM FPKM WHERE gene_id LIKE \"%$heading%\" OR gene_short_name LIKE \"%$heading%\"";
+	$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\"";
 	$result = $conn->query($sql);
 
 	$row = $result -> fetch_assoc();
@@ -228,91 +222,6 @@ Plotly.newPlot('myDiv', data, layout);
 
         <!-- Start insert heat map-->
 
-
-
-
-<head>
-  <!-- Plotly.js -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-
-<body>
-  
-
-  <script>
-var xValues = ['<?php echo $row["gene_short_name"]; ?>'];
-
-var yValues = ['rat_7973', 'rat_8050', 'rat_8043', 'rat_8033', 'rat_8059'];
-
-var zValues = [
-  [<?php echo $row["rat_7973"]; ?>],
-  [<?php echo $row["rat_8050"]; ?>],
-  [<?php echo $row["rat_8043"]; ?>],
-  [<?php echo $row["rat_8033"]; ?>],  
-  [<?php echo $row["rat_8059"]; ?>]
-];
-
-var colorscaleValue = [
-  [0, '#3D9970'],
-  [1, '#001f3f']
-];
-
-var data = [{
-  x: xValues,
-  y: yValues,
-  z: zValues,
-  type: 'heatmap',
-  colorscale: colorscaleValue,
-  showscale: false
-}];
-
-var layout = {
-  title: 'Annotated Heatmap',
-  annotations: [],
-  xaxis: {
-    ticks: '',
-    side: 'top'
-  },
-  yaxis: {
-    ticks: '',
-    ticksuffix: ' ',
-    width: 700,
-    height: 700,
-    autosize: false
-  }
-};
-
-for ( var i = 0; i < yValues.length; i++ ) {
-  for ( var j = 0; j < xValues.length; j++ ) {
-    var currentValue = zValues[i][j];
-    if (currentValue != 0.0) {
-      var textColor = 'white';
-    }else{
-      var textColor = 'black';
-    }
-    var result = {
-      xref: 'x1',
-      yref: 'y1',
-      x: xValues[j],
-      y: yValues[i],
-      text: zValues[i][j],
-      font: {
-        family: 'Arial',
-        size: 12,
-        color: 'rgb(50, 171, 96)'
-      },
-      showarrow: false,
-      font: {
-        color: textColor
-      }
-    };
-    layout.annotations.push(result);
-  }
-}
-
-Plotly.newPlot('myDiv2', data, layout);
-  </script>
-</body>
 
 
 
