@@ -55,10 +55,11 @@
                     </li>
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
-                              <li><a href="gene_search.php">Search Gene Data</a></li>
-                              <li><a href="graph_data.html">Graph Gene Data</a></li>
+                              <li><a href="gene_search.php">Expression Levels</a></li>
+                              <li><a href="diff_exp.php">Differential Expression</a></li>
+                              <li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
                               <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
-                              <li><a href="fastqc.html">View FASTQC Files</a></li>
+                              <li><a href="fastqc.html">View FastQC Files</a></li>
                          </ul>
                     </li>
                     <li>
@@ -77,7 +78,7 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Search Gene Data
+                <h1 class="page-header">Search Gene Expression Level Data
                 </h1>
 
 <?php
@@ -195,9 +196,9 @@ else {
 	if ($input) {
 				
 	if ($result->num_rows > 0) {
-			$table = "<thead><tr> <th><font size='2'>Select</font></th> <th><font size='2'>Gene Name</font></th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th><font size='2'>Rat 7973 FPKM/Counts</font></th><th><font size='2'>Rat 8050 FPKM/Counts</font></th><th><font size='2'>Rat 8043 FPKM/Counts</font></th><th><font size='2'>Rat 8033 FPKM/Counts</font></th><th><font size='2'>Rat 8059 FPKM/Counts</font></th> </tr></thead>";
+			$table = "<thead><tr> <th>Select</th> <th>Gene Name</th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th>Rat 7973 FPKM/Counts</th><th>Rat 8050 FPKM/Counts</th><th>Rat 8043 FPKM/Counts</th><th>Rat 8033 FPKM/Counts</th><th>Rat 8059 FPKM/Counts</th> </tr></thead>";
 		while ($row = $result -> fetch_assoc()) {
-			$table .= "<tbody><tr><td>".$row["click"]."<a target='_blank' href='http://www.sigmaaldrich.com/catalog/genes/".$row["gene_short_name"]."?lang=en&region=GB'><button type='button' class='btn btn-default btn-xs'>Gene Information</button></a><br><a target='_blank' href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."&pipeline=".$row["pipeline"]."'><button type='button' class='btn btn-default btn-xs'>Plotly Bar Chart</button></a></td><td><font size='2'>".$row["gene_short_name"]."</font></a></td><td>".$row["genome"]."</td><td>".$row["trim_status"]."</td><td>".$row["pipeline"]."</td><td><font size='2'>".$row["rat_7973"]."</font></td><td><font size='2'>".$row["rat_8050"]."</font></td><td><font size='2'>".$row["rat_8043"]."</font></td><td><font size='2'>".$row["rat_8033"]."</font></td><td><font size='2'>".$row["rat_8059"]."</font></td></tr>";  
+			$table .= "<tbody><tr><td>".$row["click"]."<a target='_blank' href='http://www.sigmaaldrich.com/catalog/genes/".$row["gene_short_name"]."?lang=en&region=GB'><button type='button' class='btn btn-default btn-xs'>Gene Information</button></a><br><a target='_blank' href='gene_view.php?gene=".$row["gene_short_name"]."&genome=".$row["genome"]."&pipeline=".$row["pipeline"]."'><button type='button' class='btn btn-default btn-xs'>Plotly Bar Chart</button></a></td><td>".$row["gene_short_name"]."</a></td><td>".$row["genome"]."</td><td>".$row["trim_status"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."</td><td>".$row["rat_8050"]."</td><td>".$row["rat_8043"]."</td><td>".$row["rat_8033"]."</td><td>".$row["rat_8059"]."</td></tr>";  
 		}
 		$table .= "</tbody>";
 	} 
