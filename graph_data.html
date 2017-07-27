@@ -46,19 +46,18 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="background.html">Background</a>
+                        <a href="background.html">Analysis Summary</a>
+                    </li>
                     <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Data<span class="caret"></span></a>
                          <ul class="dropdown-menu">
-                              <li><a href="gene_search.php">Search Gene Data</a></li>
-                              <li><a href="graph_data.html">Graph Gene Data</a></li>
+                              <li><a href="gene_search.php">Expression Levels</a></li>
+                              <li><a href="diff_exp.php">Differential Expression</a></li>
+                              <li><a href="graph_data.html">Volcano Plot with R Shiny</a></li>
                               <li><a href="search_ucsc.php">Visualise Mapped Data</a></li>
-                              <li><a href="fastqc.html">View FASTQC Files</a></li>
+                              <li><a href="fastqc.html">View FastQC Files</a></li>
                          </ul>
                     </li>
                     <li>
-                        <a href="image_archive.html">Image Archive</a>
-                    </li>
-                      <li>
                         <a href="team.html">Team</a>
                     </li>
                 </ul>
@@ -74,14 +73,13 @@
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Graph Data with R Shiny
-                    <small>Secondary Text</small>
+                <h1 class="page-header">Volcano Plot of logFC and P Values with R Shiny
                 </h1>
 
 <article>
 
 
-<iframe id="volcano_plot" src="http://143.210.153.229:3838/srp2017a/volcano/" style="border: none; width: 100%; height: 500px" frameborder="0"></iframe>
+<iframe id="volcano_plot" width="100%" height="768" src="http://143.210.153.229:3838/srp2017a/volcano/" style="-webkit-transform:scale(1.0);-moz-transform-scale(1.0);" frameborder="0"></iframe>
 
 </article>
 
