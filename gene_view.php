@@ -98,16 +98,17 @@
 		?>
 
 		<?php
+		// When user clicks the "Plotly Bar Chart" button, a bar graph is generated with values from the same row as the button
 		$heading='';
-			$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\"";
-			$result = $conn->query($sql);
-
-			$row = $result -> fetch_assoc();
-
-		?>
-
-		<?php
+		$genome_input = $_GET["genome"];
 		$heading=$_GET["gene"];
+		$trim_input = $_GET["trim_status"];
+		$pipeline_input = $_GET["pipeline"];
+		$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\" AND genome='$genome_input' AND trim_status='$trim_input' AND pipeline='$pipeline_input'";
+		$result = $conn->query($sql);
+
+		$row = $result -> fetch_assoc();
+
 		?>
 
 			<h1 class="page-header"><b>Plotly Bar Chart: <?php echo $heading; ?>, <?php echo $row["genome"]; ?>, Pipeline <?php echo $row["pipeline"]; ?>, <?php echo $row["trim_status"]; ?></b>
@@ -145,15 +146,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </body>
-
-<?php
-	// When user types in a query and selects dropdown options, data from the MySQL table populates a PHP generated table 
-	$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\"";
-	$result = $conn->query($sql);
-
-	$row = $result -> fetch_assoc();
-
-?>
 
 <head>
   <!-- Plotly.js -->
