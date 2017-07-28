@@ -33,7 +33,7 @@
 <body>
 
   <body background="Images/geometry.png">
- <!-- Navigation -->
+  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -79,59 +79,49 @@
             <div class="col-lg-12">
 
 
-<?php
-$db = parse_ini_file("../config-file.ini");
-// add course server to mySQL and put database on there, then change these:
-$host = $db['host'];
-$user = $db['user'];
-$pass = $db['pass'];
-$name = $db['name'];
-// Create connection
-$conn = new mysqli($host, $user, $pass, $name);
-// Check connection
-if ($conn -> connect_error) {
-	$message = $conn -> connect_error;
-} 
-else {
-	$message = "Connection successful";
-}
-?>
+		<?php
+		$db = parse_ini_file("../config-file.ini");
+		// Insert connection details from config-file.ini
+		$host = $db['host'];
+		$user = $db['user'];
+		$pass = $db['pass'];
+		$name = $db['name'];
+		// Create connection
+		$conn = new mysqli($host, $user, $pass, $name);
+		// Check connection
+		if ($conn -> connect_error) {
+			$message = $conn -> connect_error;
+		} 
+		else {
+			$message = "Connection successful";
+		}
+		?>
 
-<?php
-$heading='';
-	$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\"";
-	$result = $conn->query($sql);
+		<?php
+		$heading='';
+			$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\"";
+			$result = $conn->query($sql);
 
-	$row = $result -> fetch_assoc();
+			$row = $result -> fetch_assoc();
 
-?>
+		?>
 
-<?php
-$heading=$_GET["gene"];
-?>
+		<?php
+		$heading=$_GET["gene"];
+		?>
 
-	<h1 class="page-header"><b>Plotly Bar Chart: <?php echo $heading; ?>, <?php echo $row["genome"]; ?>, Pipeline <?php echo $row["pipeline"]; ?>, <?php echo $row["trim_status"]; ?></b>
-	</h1>
+			<h1 class="page-header"><b>Plotly Bar Chart: <?php echo $heading; ?>, <?php echo $row["genome"]; ?>, Pipeline <?php echo $row["pipeline"]; ?>, <?php echo $row["trim_status"]; ?></b>
+			</h1>
 
-<article> 
+			<article> 
 
- <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+			<div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
 
+			</article>
 
-
-</article>
-
-
-
-
-
-
-
-            </div>
+        		</div>
         </div>
         <!-- /.row -->
-
-
 
         <hr>
 
@@ -156,27 +146,14 @@ $heading=$_GET["gene"];
 
 </body>
 
-
-
-
-
-
 <?php
+	// When user types in a query and selects dropdown options, data from the MySQL table populates a PHP generated table 
 	$sql = "SELECT * FROM FPKM_and_counts WHERE gene_short_name LIKE \"%$heading%\"";
 	$result = $conn->query($sql);
 
 	$row = $result -> fetch_assoc();
 
 ?>
-
-
-
-
-
-
-        <!-- Start insert grouped bar graph-->
-
-
 
 <head>
   <!-- Plotly.js -->
@@ -186,74 +163,44 @@ $heading=$_GET["gene"];
 <body>
   
   <div id="myDiv"><!-- Plotly chart will be drawn inside this DIV --></div>
+
+  <!-- Javascript for Plotly Bar Chart X and Y Values -->
   <script>
-var xValue = ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'];
+	var xValue = ['Rat 7973', 'Rat 8050', 'Rat 8043', 'Rat 8033', 'Rat 8059'];
 
-var yValue = [<?php echo $row["rat_7973"]; ?>, <?php echo $row["rat_8050"]; ?>, <?php echo $row["rat_8043"]; ?>, <?php echo $row["rat_8033"]; ?>, <?php echo $row["rat_8059"]; ?>];
+	var yValue = [<?php echo $row["rat_7973"]; ?>, <?php echo $row["rat_8050"]; ?>, <?php echo $row["rat_8043"]; ?>, <?php echo $row["rat_8033"]; ?>, <?php echo $row["rat_8059"]; ?>];
 
-var trace1 = {
-  x: xValue, 
-  y: yValue,
-  type: 'bar',
-  text: yValue,
-  textposition: 'auto',
-  hoverinfo: 'none',
-  marker: {
-    color: 'rgb(158,202,225)',
-    opacity: 0.6,
-    line: {
-      color: 'rbg(8,48,107)',
-      width: 1.5
-    }
-  }
-};
+	var trace1 = {
+	  x: xValue, 
+	  y: yValue,
+	  type: 'bar',
+	  text: yValue,
+	  textposition: 'auto',
+	  hoverinfo: 'none',
+	  marker: {
+	    color: 'rgb(158,202,225)',
+	    opacity: 0.6,
+	    line: {
+	      color: 'rbg(8,48,107)',
+	      width: 1.5
+	    }
+	  }
+	};
 
-var data = [trace1];
+	var data = [trace1];
 
-var layout = {
-  title: 'FPKM Values (Pipeline 5) or Counts (Pipeline 6) Per Rat'
-};
+	var layout = {
+	  title: 'FPKM Values (Pipeline 5) or Counts (Pipeline 6) Per Rat'
+	};
 
-Plotly.newPlot('myDiv', data, layout);
+	Plotly.newPlot('myDiv', data, layout);
+
   </script>
 </body>
 
 
-
-
-        <!-- End insert grouped bar graph-->
-
-
-        <!-- Start insert heat map-->
-
-
-
-
-
-        <!-- End insert heat map-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		<script>
-
-
-
-
-
-
+<!-- Javascript for Entering Values into Plotly Bar Chart -->
+<script>
 
 var mousedata = [{
 
@@ -387,6 +334,6 @@ function showScatterPlot(data) {
             return d.name;
     });
 }
-		</script>
+</script>
 
 </html>
