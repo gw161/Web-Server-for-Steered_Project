@@ -82,7 +82,7 @@
 
 			    	<?php
 			    	// Insert connection details from config-file.ini
-				    $db = parse_ini_file("../config-file.ini");
+				$db = parse_ini_file("../config-file.ini");
 			    	$host = $db['host'];
 			    	$user = $db['user'];
 			    	$pass = $db['pass'];
