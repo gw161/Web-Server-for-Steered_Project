@@ -34,7 +34,7 @@
 <body>
 
   <body background="Images/geometry.png">
- <!-- Navigation -->
+  <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -81,176 +81,167 @@
                 <h1 class="page-header">Visualise Mapped Data on the UCSC Genome Browser
                 </h1>
 
-<?php
-$db = parse_ini_file("../config-file.ini");
-// add course server to mySQL and put database on there, then change these:
-$host = $db['host'];
-$user = $db['user'];
-$pass = $db['pass'];
-$name = $db['name'];
-// Create connection
-$conn = new mysqli($host, $user, $pass, $name);
-// Check connection
-if ($conn -> connect_error) {
-	$message = $conn -> connect_error;
-} 
-else {
-	$message = "Connection successful";
-}
-?>
-
-<?php
-	$find_genome_ids = 'SELECT DISTINCT(genome) FROM UCSC_search;';
-	$result = $conn->query($find_genome_ids);
-?>
-
-<?php
-	$find_trim_status = 'SELECT DISTINCT(trim_status) FROM UCSC_search;';
-	$result_trim = $conn->query($find_trim_status);
-?>
-
-
-
-<?php
-	$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM UCSC_search;';
-	$result_pipeline = $conn->query($find_pipeline_id);
-?>
-
-
- 
-	<form action="<?php echo htmlspecialchars("search_ucsc.php")?>" method="post">
-	<div class="input-group" style="width: 40%; float: left">
-		<input type=text name="search" placeholder="Enter gene name to search" class="form-control">
-
-		<div class="input-group-btn">
-			
-		</div>
-	</div>
-
-       <select style="height: 2.4em; width: 10em;" name="genome_id">
-          <option value='All'>All Genomes</option>
-          <?php while ($row = $result -> fetch_object()): ?>
-          <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
-		  <?php endwhile; ?>
-
-        </select>
-
-       <select style="height: 2.4em; width: 15em;" name="trim_status_id">
-          <option value='All'>Trim Status</option>
-          <?php while ($row = $result_trim -> fetch_object()): ?>
-          <option value='<?php echo $row->trim_status; ?>'><?php echo $row->trim_status; ?></option>
-		  <?php endwhile; ?>
-
-        </select>
-
-       <select style="height: 2.4em; width: 10em;" name="pipeline_id">
-          <option value='All'>All Pipelines</option>
-          <?php while ($row = $result_pipeline -> fetch_object()): ?>
-          <option value='<?php echo $row->pipeline; ?>'><?php echo $row->pipeline; ?></option>
-		  <?php endwhile; ?>
-
-        </select>
-
-
-			<button type="submit" class="btn btn-default">Submit</button>
-
-
-</form>
-
-
-<?php
-$input = "";
-$len = "";
-$result = "";
-$table = "";
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$input = htmlspecialchars($_POST["search"]);
-	$genome_input = htmlspecialchars($_POST["genome_id"]);
-	$trim_input = htmlspecialchars($_POST["trim_status_id"]);
-	$pipeline_input = htmlspecialchars($_POST["pipeline_id"]);
-}
-$len = strlen($input);
-if ($len >= 3) {
-	$sql = "SELECT * FROM UCSC_search WHERE gene_short_name LIKE \"%$input%\"";
-	if ($genome_input != 'All') { 
-		$sql = $sql . " AND genome='$genome_input'";
-	}
-	
-	if ($trim_input != 'All') {
-		$sql = $sql . " AND trim_status='$trim_input'";
-	}
-	
-	if ($pipeline_input != 'All') {
-		$sql = $sql . " AND pipeline='$pipeline_input'";
-	}
-
-	$result = $conn->query($sql);
-	if (!$result) {
-printf("Error: %s\n", $conn->error);
-	$table = "<strong>No results</strong>";
-} 
-	
-else {
-	$table = "";
-	function create_ucsc_link($row_assoc_array, $rat_id) {
-		$row_genome = $row_assoc_array["genome"];
-		$big_data_url = $row_assoc_array["bam_file_rat_$rat_id"];
-		$gene_input = $row_assoc_array["gene_short_name"];
-		$row_pipeline = $row_assoc_array["pipeline"];
-		$row_trim_status = $row_assoc_array["trim_status"];
-		
-		return "http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
-			"&position=$gene_input".
-			"&hgct_customText=track".
-			"%20type=bam".
-			"%20name=myBigBedTrack".
-			"%20description=%22$gene_input%20$row_genome".
-			"%20pipeline $row_pipeline $row_trim_status%22%20visibility=full".
-			"%20bigDataUrl=$big_data_url";
-	
-	}
-	
-	if ($input) {
-				
-		if ($result->num_rows > 0) {
-				$table = "<thead><tr> <th>Gene Name</th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th>Rat 7973</th><th>Rat 8050</th><th>Rat 8043</th><th>Rat 8033</th><th>Rat 8059</th> </tr></thead>";
-			while ($row = $result -> fetch_assoc()) {
-				$table .= "<tbody><tr><td>".$row["gene_short_name"]."</td><td>".$row["genome"]."</td><td>".$row["trim_status"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."<a target='_blank' href='". create_ucsc_link($row, "7973") ."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8050"]."<a target='_blank' href='".create_ucsc_link($row, "8050")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a>
-</td><td>".$row["rat_8043"]."<a target='_blank' href='".create_ucsc_link($row, "8043")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8033"]."<a target='_blank' href='".create_ucsc_link($row, "8033")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8059"]."<a target='_blank' href='".create_ucsc_link($row, "8059")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td></tr>";  
-			}
-		$table .= "</tbody>";
+		<?php
+		$db = parse_ini_file("../config-file.ini");
+		// Insert connection details from config-file.ini
+		$host = $db['host'];
+		$user = $db['user'];
+		$pass = $db['pass'];
+		$name = $db['name'];
+		// Create connection
+		$conn = new mysqli($host, $user, $pass, $name);
+		// Check connection
+		if ($conn -> connect_error) {
+			$message = $conn -> connect_error;
 		} 
-		else { 
-			$table = "<strong>No results</strong>"; 
+		else {
+			$message = "Connection successful";
+		}
+		?>
+
+		<?php
+			$find_genome_ids = 'SELECT DISTINCT(genome) FROM UCSC_search;';
+			$result = $conn->query($find_genome_ids);
+		?>
+
+		<?php
+			$find_trim_status = 'SELECT DISTINCT(trim_status) FROM UCSC_search;';
+			$result_trim = $conn->query($find_trim_status);
+		?>
+
+		<?php
+			$find_pipeline_id = 'SELECT DISTINCT(pipeline) FROM UCSC_search;';
+			$result_pipeline = $conn->query($find_pipeline_id);
+		?>
+
+
+	 	<!-- HTML form created using variable data from MySQL table -->
+		<form action="<?php echo htmlspecialchars("search_ucsc.php")?>" method="post">
+		<div class="input-group" style="width: 40%; float: left">
+			<input type=text name="search" placeholder="Enter gene name to search" class="form-control">
+
+			<div class="input-group-btn">
+			
+		    </div>
+		</div>
+
+	        <select style="height: 2.4em; width: 10em;" name="genome_id">
+		  <option value='All'>All Genomes</option>
+		  <?php while ($row = $result -> fetch_object()): ?>
+		  <option value='<?php echo $row->genome; ?>'><?php echo $row->genome; ?></option>
+			  <?php endwhile; ?>
+
+	        </select>
+
+	        <select style="height: 2.4em; width: 15em;" name="trim_status_id">
+		  <option value='All'>Trim Status</option>
+		  <?php while ($row = $result_trim -> fetch_object()): ?>
+		  <option value='<?php echo $row->trim_status; ?>'><?php echo $row->trim_status; ?></option>
+			  <?php endwhile; ?>
+
+	        </select>
+
+	        <select style="height: 2.4em; width: 10em;" name="pipeline_id">
+		  <option value='All'>All Pipelines</option>
+		  <?php while ($row = $result_pipeline -> fetch_object()): ?>
+		  <option value='<?php echo $row->pipeline; ?>'><?php echo $row->pipeline; ?></option>
+			  <?php endwhile; ?>
+
+		</select>
+
+		<button type="submit" class="btn btn-default">Submit</button>
+
+		</form>
+
+	<?php
+	$input = "";
+	$len = "";
+	$result = "";
+	$table = "";
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		$input = htmlspecialchars($_POST["search"]);
+		$genome_input = htmlspecialchars($_POST["genome_id"]);
+		$trim_input = htmlspecialchars($_POST["trim_status_id"]);
+		$pipeline_input = htmlspecialchars($_POST["pipeline_id"]);
+	}
+	$len = strlen($input);
+	if ($len >= 3) {
+		// When user types in a query and selects dropdown options, data from the MySQL table populates a PHP generated table 
+		$sql = "SELECT * FROM UCSC_search WHERE gene_short_name LIKE \"%$input%\"";
+		if ($genome_input != 'All') { 
+			$sql = $sql . " AND genome='$genome_input'";
+		}
+	
+		if ($trim_input != 'All') {
+			$sql = $sql . " AND trim_status='$trim_input'";
+		}
+	
+		if ($pipeline_input != 'All') {
+			$sql = $sql . " AND pipeline='$pipeline_input'";
+		}
+
+		$result = $conn->query($sql);
+		if (!$result) {
+	printf("Error: %s\n", $conn->error);
+		$table = "<strong>No results</strong>";
+		} 
+	
+		else {
+			$table = "";
+			function create_ucsc_link($row_assoc_array, $rat_id) {
+				$row_genome = $row_assoc_array["genome"];
+				$big_data_url = $row_assoc_array["bam_file_rat_$rat_id"];
+				$gene_input = $row_assoc_array["gene_short_name"];
+				$row_pipeline = $row_assoc_array["pipeline"];
+				$row_trim_status = $row_assoc_array["trim_status"];
+		
+				return "http://genome.ucsc.edu/cgi-bin/hgTracks?db=$row_genome".
+					"&position=$gene_input".
+					"&hgct_customText=track".
+					"%20type=bam".
+					"%20name=myBigBedTrack".
+					"%20description=%22$gene_input%20$row_genome".
+					"%20pipeline $row_pipeline $row_trim_status%22%20visibility=full".
+					"%20bigDataUrl=$big_data_url";
+	
+			}
+	
+			if ($input) {
+				
+				if ($result->num_rows > 0) {
+						// PHP generated table to hold MySQL data
+						$table = "<thead><tr> <th>Gene Name</th> <th>Genome</th> <th>Trim Status</th> <th>Pipeline</th> <th>Rat 7973</th><th>Rat 8050</th><th>Rat 8043</th><th>Rat 8033</th><th>Rat 8059</th> </tr></thead>";
+					while ($row = $result -> fetch_assoc()) {
+						$table .= "<tbody><tr><td>".$row["gene_short_name"]."</td><td>".$row["genome"]."</td><td>".$row["trim_status"]."</td><td>".$row["pipeline"]."</td><td>".$row["rat_7973"]."<a target='_blank' href='". create_ucsc_link($row, "7973") ."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8050"]."<a target='_blank' href='".create_ucsc_link($row, "8050")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a>
+		</td><td>".$row["rat_8043"]."<a target='_blank' href='".create_ucsc_link($row, "8043")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8033"]."<a target='_blank' href='".create_ucsc_link($row, "8033")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td><td>".$row["rat_8059"]."<a target='_blank' href='".create_ucsc_link($row, "8059")."'><button type='button' class='btn btn-default btn-xs'>View in UCSC</button></a></td></tr>";  
+					}
+				$table .= "</tbody>";
+				} 
+				else { 
+					$table = "<strong>No results</strong>"; 
+				}
+			}
 		}
 	}
-}
-}
-else {
-	print "<p style='clear: both;'>Please enter at least 3 characters.</p>";
-}
+	else {
+		print "<p style='clear: both;'>Please enter at least 3 characters.</p>";
+	}
 		
-?>
+	?>
 
+	<?php $conn->close();?>
 
-<?php $conn->close();?>
+	<div class="table-responsive">
+		<table class="table"><?php echo $table;?></table>
+	</div>
 
-
-
-<div class="table-responsive">
-	<table class="table"><?php echo $table;?></table>
-</div>
-
-<span class="col-sm-2"></span>
-
-
-
+	<span class="col-sm-2"></span>
 
             </div>
         </div>
         <!-- /.row -->
 
-<br><br><br><br><br><br><br><br><br><br><br><br>
+	<br><br><br><br><br><br><br><br><br><br><br><br>
 
         <hr>
 
