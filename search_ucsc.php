@@ -134,7 +134,7 @@
 	        </select>
 
 	        <select style="height: 2.4em; width: 15em;" name="trim_status_id">
-		  <option value='All'>Trim Status</option>
+		  <option value='All'>Trimmed And Untrimmed</option>
 		  <?php while ($row = $result_trim -> fetch_object()): ?>
 		  <option value='<?php echo $row->trim_status; ?>'><?php echo $row->trim_status; ?></option>
 			  <?php endwhile; ?>
