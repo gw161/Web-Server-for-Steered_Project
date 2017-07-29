@@ -1,0 +1,198 @@
+library(readr)
+Rn<-c("Rn4","Rn6")
+trim<-c("trimmed","untrimmed")
+dataset <- c("7973","8033","8043","8050","8059")
+
+#loops through both Rn and trim status and completes all actions on each
+for(a in seq_along(Rn)){
+  for(b in seq_along(trim)){
+    for(c in seq_along(dataset)){
+
+#imports the files
+filepath<-paste("~/Desktop/groupproject/files/final/",trim[b],"/",trim[b],"_",Rn[a],"_",dataset[c],"_final", sep = "")        
+assign(paste("genes",dataset[c],Rn[a],trim[b],sep = "_"),read_delim(filepath, "\t", escape_double = FALSE, trim_ws = TRUE))    
+    }
+  }
+}
+#merges all imported datasets into relevant categories for further analysis
+genes_Rn4_untrimmed<-merge(genes_7973_Rn4_untrimmed[,c(5,7,10,11,12)],merge(genes_8050_Rn4_untrimmed[,c(7,10,11,12)],merge(genes_8033_Rn4_untrimmed[,c(7,10,11,12)],merge(genes_8043_Rn4_untrimmed[,c(7,10,11,12)],genes_8059_Rn4_untrimmed[,c(7,10,11,12)], by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE)
+genes_Rn4_trimmed<-merge(genes_7973_Rn4_trimmed[,c(5,7,10,11,12)],merge(genes_8050_Rn4_trimmed[,c(7,10,11,12)],merge(genes_8033_Rn4_trimmed[,c(7,10,11,12)],merge(genes_8043_Rn4_trimmed[,c(7,10,11,12)],genes_8059_Rn4_trimmed[,c(7,10,11,12)], by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE)
+genes_Rn6_untrimmed<-merge(genes_7973_Rn6_untrimmed[,c(5,7,10,11,12)],merge(genes_8050_Rn6_untrimmed[,c(7,10,11,12)],merge(genes_8033_Rn6_untrimmed[,c(7,10,11,12)],merge(genes_8043_Rn6_untrimmed[,c(7,10,11,12)],genes_8059_Rn6_untrimmed[,c(7,10,11,12)], by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE)
+genes_Rn6_trimmed<-merge(genes_7973_Rn6_trimmed[,c(5,7,10,11,12)],merge(genes_8050_Rn6_trimmed[,c(7,10,11,12)],merge(genes_8033_Rn6_trimmed[,c(7,10,11,12)],merge(genes_8043_Rn6_trimmed[,c(7,10,11,12)],genes_8059_Rn6_trimmed[,c(7,10,11,12)], by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE), by ="locus", all=TRUE)
+
+#sets any unnamed genes a gene name of awesome1..n
+j=1
+for (i in 1:nrow(genes_Rn4_untrimmed)){
+  n<-paste("awesome",j,sep="")
+  if(is.na(genes_Rn4_untrimmed$gene_short_name[i])){
+    genes_Rn4_untrimmed$gene_short_name[i]<- n
+    j<<-j+1
+  } else if (genes_Rn4_untrimmed$gene_short_name[i]=='-') {                      
+    genes_Rn4_untrimmed$gene_short_name[i]<- n
+    j<<-j+1
+  }
+}
+#logs all FPKM values in the table
+genes_Rn4_untrimmed[,3:17]<-log2(genes_Rn4_untrimmed[,3:17])
+#sets any NA values to 0
+genes_Rn4_untrimmed[,3:17][sapply(genes_Rn4_untrimmed[,3:17], is.na)]<-0
+genes_Rn4_untrimmed[,c(3,6,9,12,15)][sapply(genes_Rn4_untrimmed[,c(3,6,9,12,15)], is.infinite)]<-0
+#creates a table of counts which contains just the FPKM values and sets the rownames to the gene names
+counts_Rn4_untrimmed<-genes_Rn4_untrimmed[,c(3,6,9,12,15)]
+rownames(counts_Rn4_untrimmed)<-genes_Rn4_untrimmed$gene_short_name
+#sets experiment design and column names
+design_Rn4_untrimmed<-model.matrix(~ 0+factor(c(1,1,2,2,2)))
+colnames(design_Rn4_untrimmed)<-c("control","treatment")
+#creates the contrast matrix so limma knows which groups to compare
+contrast.matrix_Rn4_untrimmed <- makeContrasts(treatment-control, levels=design_Rn4_untrimmed)
+#fits the data to the design
+fit_Rn4_untrimmed <- lmFit(counts_Rn4_untrimmed, design_Rn4_untrimmed)
+#data fitted to the design is then compared using the contrast matrix
+fit_Rn4_untrimmed <- contrasts.fit(fit_Rn4_untrimmed, contrast.matrix_Rn4_untrimmed)
+#calculates stats on the data, using the LFC as provided and uses robust to account for outliers.
+fit_Rn4_untrimmed <- treat(fit_Rn4_untrimmed, lfc=log2(1.5), trend=TRUE, robust=TRUE)
+#applies a true or false indicator to each row if meets the requirements to be DEG or not
+results_Rn4_untrimmed <- decideTests(fit_Rn4_untrimmed,adjust.method="none")
+#selects data to output for comparison on the website
+output_Rn4_untrimmed <- toptable(fit_Rn4_untrimmed, coef=1, adjust="none",n=Inf,sort.by = "logFC")
+
+#repeat of above for the remaining datasets
+j=1
+for (i in 1:nrow(genes_Rn4_trimmed)){
+  n<-paste("awesome",j,sep="")
+  if(is.na(genes_Rn4_trimmed$gene_short_name[i])){
+    genes_Rn4_trimmed$gene_short_name[i]<- n
+    j<<-j+1
+  } else if (genes_Rn4_trimmed$gene_short_name[i]=='-') {                      
+    genes_Rn4_trimmed$gene_short_name[i]<- n
+    j<<-j+1
+  }
+}
+genes_Rn4_trimmed[,3:17]<-log2(genes_Rn4_trimmed[,3:17])
+genes_Rn4_trimmed[,3:17][sapply(genes_Rn4_trimmed[,3:17], is.na)]<-0
+genes_Rn4_trimmed[,3:17][sapply(genes_Rn4_trimmed[,3:17], is.infinite)]<-0
+counts_Rn4_trimmed<-genes_Rn4_trimmed[,c(3,6,9,12,15)]
+rownames(counts_Rn4_trimmed)<-genes_Rn4_trimmed$gene_short_name
+design_Rn4_trimmed<-model.matrix(~ 0+factor(c(1,1,2,2,2)))
+colnames(design_Rn4_trimmed)<-c("control","treatment")
+contrast.matrix_Rn4_trimmed <- makeContrasts(treatment-control, levels=design_Rn4_trimmed)
+fit_Rn4_trimmed <- lmFit(counts_Rn4_trimmed, design_Rn4_trimmed)
+fit_Rn4_trimmed <- contrasts.fit(fit_Rn4_trimmed, contrast.matrix_Rn4_trimmed)
+fit_Rn4_trimmed <- treat(fit_Rn4_trimmed, lfc=log2(1.5), trend=TRUE, robust=TRUE)
+results_Rn4_trimmed <- decideTests(fit_Rn4_trimmed,adjust.method="none")
+output_Rn4_trimmed <- toptable(fit_Rn4_trimmed, coef=1, adjust="none",n=Inf,sort.by = "logFC")
+
+j=1
+for (i in 1:nrow(genes_Rn6_untrimmed)){
+  n<-paste("awesome",j,sep="")
+  if(is.na(genes_Rn6_untrimmed$gene_short_name[i])){
+    genes_Rn6_untrimmed$gene_short_name[i]<- n
+    j<<-j+1
+  } else if (genes_Rn6_untrimmed$gene_short_name[i]=='-') {                      
+    genes_Rn6_untrimmed$gene_short_name[i]<- n
+    j<<-j+1
+  }
+}
+genes_Rn6_untrimmed[,3:17]<-log2(genes_Rn6_untrimmed[,3:17])
+genes_Rn6_untrimmed[,3:17][sapply(genes_Rn6_untrimmed[,3:17], is.na)]<-0
+genes_Rn6_untrimmed[,3:17][sapply(genes_Rn6_untrimmed[,3:17], is.infinite)]<-0
+counts_Rn6_untrimmed<-genes_Rn6_untrimmed[,c(3,6,9,12,15)]
+rownames(counts_Rn6_untrimmed)<-genes_Rn6_untrimmed$gene_short_name
+design_Rn6_untrimmed<-model.matrix(~ 0+factor(c(1,1,2,2,2)))
+colnames(design_Rn6_untrimmed)<-c("control","treatment")
+contrast.matrix_Rn6_untrimmed <- makeContrasts(treatment-control, levels=design_Rn6_untrimmed)
+fit_Rn6_untrimmed <- lmFit(counts_Rn6_untrimmed, design_Rn6_untrimmed)
+fit_Rn6_untrimmed <- contrasts.fit(fit_Rn6_untrimmed, contrast.matrix_Rn6_untrimmed)
+fit_Rn6_untrimmed <- treat(fit_Rn6_untrimmed, lfc=log2(1.5), trend=TRUE, robust=TRUE)
+results_Rn6_untrimmed <- decideTests(fit_Rn6_untrimmed,adjust.method="none")
+output_Rn6_untrimmed <- toptable(fit_Rn6_untrimmed, coef=1, adjust="none",n=Inf,sort.by="logFC")
+
+j=1
+for (i in 1:nrow(genes_Rn6_trimmed)){
+  n<-paste("awesome",j,sep="")
+  if(is.na(genes_Rn6_trimmed$gene_short_name[i])){
+    genes_Rn6_trimmed$gene_short_name[i]<- n
+    j<<-j+1
+  } else if (genes_Rn6_trimmed$gene_short_name[i]=='-') {                      
+    genes_Rn6_trimmed$gene_short_name[i]<- n
+    j<<-j+1
+  }
+}
+genes_Rn6_trimmed[,3:17]<-log2(genes_Rn6_trimmed[,3:17])
+genes_Rn6_trimmed[,3:17][sapply(genes_Rn6_trimmed[,3:17], is.na)]<-0
+genes_Rn6_trimmed[,3:17][sapply(genes_Rn6_trimmed[,3:17], is.infinite)]<-0
+counts_Rn6_trimmed<-genes_Rn6_trimmed[,c(3,6,9,12,15)]
+rownames(counts_Rn6_trimmed)<-genes_Rn6_trimmed$gene_short_name
+design_Rn6_trimmed<-model.matrix(~ 0+factor(c(1,1,2,2,2)))
+colnames(design_Rn6_trimmed)<-c("control","treatment")
+contrast.matrix_Rn6_trimmed <- makeContrasts(treatment-control, levels=design_Rn6_trimmed)
+fit_Rn6_trimmed <- lmFit(counts_Rn6_trimmed, design_Rn6_trimmed)
+fit_Rn6_trimmed <- contrasts.fit(fit_Rn6_trimmed, contrast.matrix_Rn6_trimmed)
+fit_Rn6_trimmed <- treat(fit_Rn6_trimmed, lfc=log2(1.5), trend=TRUE, robust=TRUE)
+results_Rn6_trimmed <- decideTests(fit_Rn6_trimmed,adjust.method="none")
+output_Rn6_trimmed <- toptable(fit_Rn6_trimmed, coef=1, adjust="none",n=Inf,sort.by = "logFC")
+
+
+
+write.table(output_Rn4_untrimmed, file="/home/tes9/Desktop/groupproject/files/R/results/output_Rn4_untrimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(output_Rn4_trimmed, file="/home/tes9/Desktop/groupproject/files/R/results/output_Rn4_trimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(output_Rn6_untrimmed, file="/home/tes9/Desktop/groupproject/files/R/results/output_Rn6_untrimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(output_Rn6_trimmed, file="/home/tes9/Desktop/groupproject/files/R/results/output_Rn6_trimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+
+write.table(results_Rn4_untrimmed, file="/home/tes9/Desktop/groupproject/files/R/results/results_Rn4_untrimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(results_Rn4_trimmed, file="/home/tes9/Desktop/groupproject/files/R/results/results_Rn4_trimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(results_Rn6_untrimmed, file="/home/tes9/Desktop/groupproject/files/R/results/results_Rn6_untrimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(results_Rn6_trimmed, file="/home/tes9/Desktop/groupproject/files/R/results/results_Rn6_trimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+
+write.table(genes_Rn4_untrimmed, file="/home/tes9/Desktop/groupproject/files/R/results/genes_Rn4_untrimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(genes_Rn4_trimmed, file="/home/tes9/Desktop/groupproject/files/R/results/genes_Rn4_trimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(genes_Rn6_untrimmed, file="/home/tes9/Desktop/groupproject/files/R/results/genes_Rn6_untrimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+write.table(genes_Rn6_trimmed, file="/home/tes9/Desktop/groupproject/files/R/results/genes_Rn6_trimmed.csv", row.names = TRUE,sep="\t",quote=FALSE)
+
+
+summary(results_Rn4_untrimmed)
+summary(results_Rn4_trimmed)
+summary(results_Rn6_untrimmed)
+summary(results_Rn6_trimmed)
+
+# MD Plot (Treat)
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn4_untrimmed_Treat_MDplot.jpg", sep = ""))
+plotMD(fit_Rn4_untrimmed, main = "Rn4_untrimmed",zero.weights=FALSE,xlim=c(-10,10),ylim=c(-10,10),status=results_Rn4_untrimmed,hl.col=c("red","blue"))
+dev.off()
+
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn4_trimmed_Treat_MDplot.jpg", sep = ""))
+plotMD(fit_Rn4_trimmed, main = "Rn4_trimmed",zero.weights=FALSE,xlim=c(-10,10),ylim=c(-10,10),status=results_Rn4_trimmed,hl.col=c("red","blue"))
+dev.off()
+
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn6_untrimmed_Treat_MDplot.jpg", sep = ""))
+plotMD(fit_Rn6_untrimmed, main = "Rn6_untrimmed",zero.weights=FALSE,xlim=c(-10,10),ylim=c(-10,10),status=results_Rn6_untrimmed,hl.col=c("red","blue"))
+dev.off()
+
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn6_trimmed_Treat_MDplot.jpg", sep = ""))
+plotMD(fit_Rn6_trimmed, main = "Rn6_trimmed",zero.weights=FALSE,xlim=c(-10,10),ylim=c(-10,10),status = results_Rn6_trimmed,hl.col=c("red","blue"))
+dev.off()
+
+#Volcano plots
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn4_untrimmed_Treat_Vplot.jpg", sep = ""))
+plot(output_Rn4_untrimmed$logFC, -log10(output_Rn4_untrimmed$P.Value), main = "Rn4_untrimmed",pch=19, cex=0.2, col=ifelse(output_Rn4_untrimmed$logFC < -1.5, "blue", ifelse(output_Rn4_untrimmed$logFC > 1.5, "red","black")), xlab = "logFC", ylab = "-log10(P-Val)",xlim=c(-10,10),ylim=c(0,10))
+abline(h=1.3, col="blue")
+abline(h=2, col="green")
+dev.off()
+
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn4_trimmed_Treat_Vplot.jpg", sep = ""))
+plot(output_Rn4_trimmed$logFC, -log10(output_Rn4_trimmed$P.Value),main = "Rn4_trimmed", pch=19, cex=0.2, col=ifelse(output_Rn4_trimmed$logFC < -1.5, "blue", ifelse(output_Rn4_trimmed$logFC > 1.5, "red","black")), xlab = "logFC", ylab = "-log10(P-Val)",xlim=c(-10,10),ylim=c(0,10))
+abline(h=1.3, col="blue")
+abline(h=2, col="green")
+dev.off()
+
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn6_untrimmed_Treat_Vplot.jpg", sep = ""))
+plot(output_Rn6_untrimmed$logFC, -log10(output_Rn6_untrimmed$P.Value),main = "Rn6_untrimmed", pch=19, cex=0.2, col=ifelse(output_Rn6_untrimmed$logFC < -1.5, "blue", ifelse(output_Rn6_untrimmed$logFC > 1.5, "red","black")), xlab = "logFC", ylab = "-log10(P-Val)",xlim=c(-10,10),ylim=c(0,10))
+abline(h=1.3, col="blue")
+abline(h=2, col="green")
+dev.off()
+
+jpeg(paste("/home/tes9/Desktop/groupproject/files/graphs/Rn6_trimmed_Treat_Vplot.jpg", sep = ""))
+plot(output_Rn6_trimmed$logFC, -log10(output_Rn6_trimmed$P.Value),main = "Rn6_trimmed", pch=19, cex=0.2, col=ifelse(output_Rn6_trimmed$logFC < -1.5, "blue", ifelse(output_Rn6_trimmed$logFC > 1.5, "red","black")), xlab = "logFC", ylab = "-log10(P-Val)",xlim=c(-10,10),ylim=c(0,10))
+abline(h=1.3, col="blue")
+abline(h=2, col="green")
+dev.off()
